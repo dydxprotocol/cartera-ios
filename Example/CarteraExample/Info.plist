@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>rainbow</string>
+		<string>trust</string>
+		<string>argent</string>
+		<string>metamask</string>
+		<string>cryptowallet</string>
+		<string>pillarwallet</string>
+		<string>imtokenv2</string>
+		<string>ontoprovider</string>
+		<string>tpoutside</string>
+		<string>mathwallet</string>
+		<string>bitpay</string>
+		<string>ledgerlive</string>
+		<string>1inch</string>
+		<string>huobiwallet</string>
+		<string>eidoo</string>
+		<string>mykeywalletconnect</string>
+		<string>coin98</string>
+		<string>zel</string>
+		<string>nash</string>
+		<string>cybavowallet</string>
+		<string>safepalwallet</string>
+		<string>easypocket</string>
+		<string>sparkpoint</string>
+		<string>bitkeep</string>
+		<string>peakdefiwallet</string>
+		<string>halodefiwallet</string>
+		<string>ellipal</string>
+		<string>keyring</string>
+		<string>aktionariat</string>
+		<string>talken-wallet</string>
+		<string>flare</string>
+		<string>kyberswap</string>
+		<string>atoken</string>
+		<string>tongue</string>
+		<string>rwallet</string>
+		<string>plasmapay</string>
+		<string>o3wallet</string>
+		<string>hashme</string>
+		<string>defiantapp</string>
+		<string>wc</string>
+		<string>oneinch</string>
+		<string>cbwallet</string>
+		<string>zerion</string>
+		<string>itokenhd</string>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+</dict>
+</plist>
