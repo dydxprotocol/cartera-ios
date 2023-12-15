@@ -257,6 +257,9 @@ private extension Action {
             } else {
                 chainIdText = "1"
             }
+            
+            let maxFeePerGas = String(bigUInt: ethereum.maxFeePerGas)
+            let maxPriorityFeePerGas = String(bigUInt: ethereum.maxPriorityFeePerGas)
 
             self.init(jsonRpc: .eth_sendTransaction(
                 fromAddress: from.asString().uppercased(),
@@ -265,8 +268,8 @@ private extension Action {
                 data: dataText,
                 nonce: nonce,
                 gasPriceInWei: gasPriceText,
-                maxFeePerGas: nil,
-                maxPriorityFeePerGas: nil,
+                maxFeePerGas: maxFeePerGas,
+                maxPriorityFeePerGas: maxPriorityFeePerGas,
                 gasLimit: gasText,
                 chainId: chainIdText)
             )

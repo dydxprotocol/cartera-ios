@@ -543,12 +543,19 @@ struct Transaction: Codable {
         if let from = transaction.from {
             let maxPriorityFeePerGas: BigUInt?
             let maxFeePerGas: BigUInt?
-            if let gasPrice = gasPrice {
-                maxPriorityFeePerGas = BigUInt(1500000000)
-                maxFeePerGas = (maxPriorityFeePerGas! + gasPrice) * 11 / 10
+            
+            if let maxPriorityFeePerGasValue = ethereumTransactionRequest.maxPriorityFeePerGas,
+               let maxFeePerGasValue = ethereumTransactionRequest.maxFeePerGas {
+                maxPriorityFeePerGas = BigUInt(maxPriorityFeePerGasValue)
+                maxFeePerGas = BigUInt(maxFeePerGasValue)
             } else {
-                maxPriorityFeePerGas = nil
-                maxFeePerGas = nil
+                if let gasPrice = gasPrice {
+                    maxPriorityFeePerGas = BigUInt(1500000000)
+                    maxFeePerGas = (maxPriorityFeePerGas! + gasPrice) * 11 / 10
+                } else {
+                    maxPriorityFeePerGas = nil
+                    maxFeePerGas = nil
+                }
             }
 
             let dataText = transaction.data?.web3.hexString
