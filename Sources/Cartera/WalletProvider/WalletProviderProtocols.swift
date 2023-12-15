@@ -38,12 +38,21 @@ public struct EthereumTransactionRequest {
     public let gasPrice: BigUInt?
     public let gas: BigUInt?
     public let nonce: Int?
-
-    public init(transaction: EthereumTransaction, gasPrice: BigUInt?, gas: BigUInt?, nonce: Int?) {
+    public let maxPriorityFeePerGas: BigUInt?
+    public let maxFeePerGas: BigUInt?
+    
+    public init(transaction: EthereumTransaction,
+                gasPrice: BigUInt?,
+                gas: BigUInt?,
+                nonce: Int?,
+                maxPriorityFeePerGas: BigUInt? = nil,
+                maxFeePerGas: BigUInt? = nil) {
         self.transaction = transaction
         self.gasPrice = gasPrice
         self.gas = gas
         self.nonce = nonce
+        self.maxPriorityFeePerGas = maxPriorityFeePerGas
+        self.maxFeePerGas = maxFeePerGas
     }
 }
 
