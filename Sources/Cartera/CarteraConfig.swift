@@ -119,7 +119,9 @@ public struct CarteraConfig: SingletonProtocol {
         }
 
         if let walletConnectV2Config = walletProvidersConfig.walletConnectV2 {
-            Networking.configure(projectId: walletConnectV2Config.projectId, socketFactory: DefaultSocketFactory())
+            Networking.configure(groupIdentifier: "group.exchange.dydx.CarteraExample",
+                                 projectId: walletConnectV2Config.projectId,
+                                 socketFactory: DefaultSocketFactory())
             
             let metadata = AppMetadata(
                 name: walletConnectV2Config.clientName,
