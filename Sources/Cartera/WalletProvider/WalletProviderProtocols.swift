@@ -13,9 +13,9 @@ import BigInt
 public struct WalletRequest: Equatable {
     public let wallet: Wallet?
     public let address: String?
-    public let chainId: Int?
+    public let chainId: String?
 
-    public init(wallet: Wallet?, address: String?, chainId: Int?) {
+    public init(wallet: Wallet?, address: String?, chainId: String?) {
         self.wallet = wallet
         self.address = address
         self.chainId = chainId

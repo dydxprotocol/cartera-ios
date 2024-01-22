@@ -9,12 +9,12 @@ import Foundation
 
 public class WalletInfo {
     public var address: String?
-    public var chainId: Int?
+    public var chainId: String?
     public var wallet: Wallet?
     public var peerName: String?
     public var peerImageUrl: URL?
     
-    public init(address: String?, chainId: Int?, wallet: Wallet?, peerName: String? = nil, peerImageUrl: URL? = nil) {
+    public init(address: String?, chainId: String?, wallet: Wallet?, peerName: String? = nil, peerImageUrl: URL? = nil) {
         self.address = address
         self.chainId = chainId
         self.wallet = wallet

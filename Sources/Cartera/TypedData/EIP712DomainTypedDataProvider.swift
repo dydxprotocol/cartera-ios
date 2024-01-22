@@ -12,7 +12,7 @@ public class EIP712DomainTypedDataProvider: NSObject, WalletTypedDataProviderPro
     public dynamic var eip712: EIP712TypedData?
     public dynamic var message: WalletTypedData?
 
-    public init(name: String, chainId: Int, version: String?) {
+    public init(name: String, chainId: String, version: String?) {
         self.eip712 = EIP712TypedData(name: name, chainId: chainId, version: version)
         super.init()
     }

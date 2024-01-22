@@ -265,9 +265,9 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
     }
     
-    private func doConnect(uri: WalletConnectURI, chainId: Int?, methods: [String]?) {
+    private func doConnect(uri: WalletConnectURI, chainId: String?, methods: [String]?) {
         Console.shared.log("[PROPOSER] Connecting to a pairing...")
-        let chainId = chainId ?? 1
+        let chainId = chainId ?? "1"
         let chains: Set<Blockchain> = Set([ Blockchain("eip155:\(chainId)")! ])
         let namespaces: [String: ProposalNamespace] = [
             "eip155": ProposalNamespace(
@@ -512,12 +512,7 @@ extension WalletInfo {
     convenience init(session: Session, wallet: Wallet?) {
          let account = session.namespaces.values.first?.accounts.first
          let address = account?.address
-         let chainId: Int?
-         if let reference = account?.reference {
-             chainId = Int(reference)
-         } else {
-             chainId = nil
-         }
+         let chainId = account?.reference
          let name = session.peer.name
          let imageUrl: URL?
          if let icon = session.peer.icons.first, let url = URL(string: icon) {

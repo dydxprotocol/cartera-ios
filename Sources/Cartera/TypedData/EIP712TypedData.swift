@@ -9,7 +9,7 @@
 import Foundation
 
 public class EIP712TypedData: WalletTypedData {
-    public init(name: String, chainId: Int, version: String?) {
+    public init(name: String, chainId: String, version: String?) {
         super.init(typeName: "EIP712Domain")
         var definitions =  [[String: String]]()
         var data = [String: Any]()

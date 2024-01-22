@@ -227,3 +227,8 @@ extension UIApplication: URLHandlerProtocol {
         open(url, options: [:], completionHandler: completion)
     }
 }
+
+public struct CarteraConstants {
+    public static let testnetChainId = "11155111"
+    public static let testnetName = "Sepolia"
+}

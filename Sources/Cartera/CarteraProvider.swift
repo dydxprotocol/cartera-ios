@@ -12,7 +12,7 @@ public final class CarteraProvider: NSObject, WalletOperationProviderProtocol {
     
     private let debugLinkHandler = WalletConnectionType.walletConnectV2
     
-    public func startDebugLink(chainId: Int, completion: @escaping WalletConnectCompletion) {
+    public func startDebugLink(chainId: String, completion: @escaping WalletConnectCompletion) {
         currentRequestHandler = CarteraConfig.shared.getProvider(of: debugLinkHandler)
         userConsentDelegate = SkippedWalletUserConsent()
         currentRequestHandler?.walletStatusDelegate = walletStatusDelegate

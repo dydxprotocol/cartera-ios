@@ -555,7 +555,7 @@ extension WalletConnectV1Provider: ClientDelegate {
                     let errorTitle: String?
                     let errorMessage: String?
                     let code: CarteraErrorCode?
-                    if let expectedChainId = self.expected?.chainId, expectedChainId != 0, walletInfo.chainId != 0, walletInfo.chainId != expectedChainId {
+                    if let expectedChainId = self.expected?.chainId, walletInfo.chainId != 0, "\(walletInfo.chainId)" != expectedChainId {
                         errorTitle = "Network Mismatch"
                         errorMessage = "Please switch network from the wallet"
                         code  = .networkMismatch
@@ -576,7 +576,7 @@ extension WalletConnectV1Provider: ClientDelegate {
                     } else {
                         HapticFeedback.shared?.notify(type: .success)
                         self._walletStatus.connectedWallet = WalletInfo(address: ethereumAddress,
-                                                                        chainId: walletInfo.chainId,
+                                                                        chainId: "\(walletInfo.chainId)",
                                                                         wallet: self.expected?.wallet,
                                                                         peerName: walletInfo.peerMeta.name,
                                                                         peerImageUrl: walletInfo.peerMeta.icons.first)

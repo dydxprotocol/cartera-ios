@@ -18,8 +18,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet var walletLabel: UILabel?
     @IBOutlet var connectedDeepLinkLabel: UILabel?
   
-    private var chainId: Int {
-        chainSegmentControl?.selectedSegmentIndex == 0 ? 1 : 5
+    private var chainId: String {
+        chainSegmentControl?.selectedSegmentIndex == 0 ? "1" : CarteraConstants.testnetChainId
     }
     
     private lazy var provider: CarteraProvider = {
@@ -61,7 +61,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBAction func qrCodeScan() {
         qrCodeStarted = true
-        provider.startDebugLink(chainId: 5) { [weak self] info, error in
+        provider.startDebugLink(chainId: CarteraConstants.testnetChainId) { [weak self] info, error in
             if let error = error {
                 print(error)
             } else if let info = info {
@@ -230,7 +230,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                   nonce: nil,
                                                   gasPrice: nil,
                                                   gasLimit: nil,
-                                                  chainId: self.chainId)
+                                                  chainId: Int(self.chainId))
             let ethereumRequest = EthereumTransactionRequest(transaction: transaction,
                                                              gasPrice: BigUInt(10000000),
                                                              gas: BigUInt(10000000),
@@ -296,12 +296,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.alertController = alertController
     }
     
-    private func message(action: String, chainId: Int) -> WalletTypedData {
+    private func message(action: String, chainId: String) -> WalletTypedData {
         var definitions = [[String: String]]()
         var data = [String: Any]()
         definitions.append(type(name: "action", type: "string"))
         data["action"] = action
-        if chainId == 1 {
+        if chainId == "1" {
             definitions.append(type(name: "onlySignOn", type: "string"))
             data["onlySignOn"] = "https://trade.dydx.exchange"
         }
