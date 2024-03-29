@@ -119,7 +119,11 @@ public struct CarteraConfig: SingletonProtocol {
         }
 
         if let walletConnectV2Config = walletProvidersConfig.walletConnectV2 {
-            Networking.configure(projectId: walletConnectV2Config.projectId, socketFactory: DefaultSocketFactory())
+            Networking.configure(
+                groupIdentifier: "group.exchange.dydx.cartera",
+                projectId: walletConnectV2Config.projectId,
+                socketFactory: DefaultSocketFactory()
+            )
             
             let metadata = AppMetadata(
                 name: walletConnectV2Config.clientName,
@@ -130,6 +134,8 @@ public struct CarteraConfig: SingletonProtocol {
             )
             
             Pair.configure(metadata: metadata)
+            
+            Sign.configure(crypto: walletConnectV2Config.cryptoProvider)
         }
     }
     
@@ -192,7 +198,11 @@ public struct WalletConnectV1Config: Equatable {
 }
 
 public struct WalletConnectV2Config: Equatable {
-    public init(projectId: String, clientName: String, clientDescription: String, clientUrl: String, iconUrls: [String], redirectNative: String, redirectUniversal: String?) {
+    public static func == (lhs: WalletConnectV2Config, rhs: WalletConnectV2Config) -> Bool {
+        lhs.projectId == rhs.projectId
+    }
+    
+    public init(projectId: String, clientName: String, clientDescription: String, clientUrl: String, iconUrls: [String], redirectNative: String, redirectUniversal: String?, cryptoProvider: CryptoProvider) {
         self.projectId = projectId
         self.clientName = clientName
         self.clientDescription = clientDescription
@@ -200,6 +210,7 @@ public struct WalletConnectV2Config: Equatable {
         self.iconUrls = iconUrls
         self.redirectNative = redirectNative
         self.redirectUniversal = redirectUniversal
+        self.cryptoProvider = cryptoProvider
     }
     
     let projectId: String
@@ -209,6 +220,7 @@ public struct WalletConnectV2Config: Equatable {
     let iconUrls: [String]
     let redirectNative: String
     let redirectUniversal: String?
+    let cryptoProvider: CryptoProvider
 }
 
 public struct WalletSegueConfig: Equatable {

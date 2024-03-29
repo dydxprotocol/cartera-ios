@@ -37,14 +37,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                           scheme: "dydx:",
                                                           clientUrl: "https://trade.dydx.exchange/",
                                                           bridgeUrl: "<WC1_BRIDGE_URL>")
-        let walletConnectV2Config = WalletConnectV2Config(projectId: "<WC2_PROJECT_ID>",
+        let walletConnectV2Config = WalletConnectV2Config(projectId: "47559b2ec96c09aed9ff2cb54a31ab0e",
                                                           clientName: "dYdX",
                                                           clientDescription: "dYdX Trading App",
                                                           clientUrl: "https://trade.dydx.exchange/",
                                                           iconUrls: ["https://media.dydx.exchange/logos/dydx-x.png"],
                                                           redirectNative: "dydxV4",
-                                                          redirectUniversal: "https://trade.dydx.exchange/")
-        let walletSegueConfig = WalletSegueConfig(callbackUrl: "<WS_CALLBACK_URL>")
+                                                          redirectUniversal: "https://trade.dydx.exchange/",
+                                                          cryptoProvider: DefaultCryptoProvider())
+        let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://trade.stage.dydx.exchange/walletsegueCarteraExample")
         return  WalletProvidersConfig(walletConnectV1: walletConnectV1Config,
                                       walletConnectV2: walletConnectV2Config,
                                       walletSegue: walletSegueConfig)

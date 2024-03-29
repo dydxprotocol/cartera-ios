@@ -17,6 +17,7 @@ public enum CarteraErrorCode: Int {
     case refusedByWallet
     case linkOpenFailed
     case invalidSession
+    case invalidRequest
     case invalidInput
     case addChainFailed
     case addChainNotSupported
@@ -45,6 +46,8 @@ public enum CarteraErrorCode: Int {
             return "Unable to open link"
         case .invalidSession:
             return "Invalid session"
+        case .invalidRequest:
+            return "Invalid request"
         case .invalidInput:
             return "Invalid input"
         case .addChainFailed:

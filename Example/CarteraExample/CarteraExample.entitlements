@@ -6,5 +6,9 @@
 	<array>
 		<string>applinks:trade.stage.dydx.exchange?mode=developer</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.exchange.dydx.cartera</string>
+	</array>
 </dict>
 </plist>

@@ -268,7 +268,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     private func doConnect(uri: WalletConnectURI, chainId: Int?, methods: [String]?) {
         Console.shared.log("[PROPOSER] Connecting to a pairing...")
         let chainId = chainId ?? 1
-        let chains: Set<Blockchain> = Set([ Blockchain("eip155:\(chainId)")! ])
+        let chains: [Blockchain] = [ Blockchain("eip155:\(chainId)")! ]
         let namespaces: [String: ProposalNamespace] = [
             "eip155": ProposalNamespace(
                 chains: chains,
@@ -330,7 +330,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
         
         let payload = AnyCodable([message, account])
-        let request = Request(topic: session.topic, method: "personal_sign", params: payload, chainId: chainId)
+        let request = try? Request(topic: session.topic, method: "personal_sign", params: payload, chainId: chainId)
+        guard let request = request else  {
+            completion(nil, WalletError.error(code: .invalidRequest))
+            return
+        }
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -359,7 +363,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
         
         let payload = AnyCodable([account, typeDataString])
-        let request = Request(topic: session.topic, method: "eth_signTypedData", params: payload, chainId: chainId)
+        let request = try? Request(topic: session.topic, method: "eth_signTypedData", params: payload, chainId: chainId)
+        guard let request = request else  {
+            completion(nil, WalletError.error(code: .invalidRequest))
+            return
+        }
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -383,7 +391,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
      
         let payload = AnyCodable([transaction])
-        let request = Request(topic: session.topic, method: "eth_sendTransaction", params: payload, chainId: chainId)
+        let request = try? Request(topic: session.topic, method: "eth_sendTransaction", params: payload, chainId: chainId)
+        guard let request = request else  {
+            completion(nil, WalletError.error(code: .invalidRequest))
+            return
+        }
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -406,7 +418,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
      
         let payload = AnyCodable([chain])
-        let request = Request(topic: session.topic, method: "wallet_addEthereumChain", params: payload, chainId: chainId)
+        let request = try? Request(topic: session.topic, method: "wallet_addEthereumChain", params: payload, chainId: chainId)
+        guard let request = request else  {
+            completion(nil, WalletError.error(code: .invalidRequest))
+            return
+        }
         operationCompletions[request.id] = completion
         Task {
             do {

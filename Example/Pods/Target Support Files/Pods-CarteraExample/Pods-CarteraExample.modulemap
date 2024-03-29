@@ -1,0 +1,6 @@
+framework module Pods_CarteraExample {
+  umbrella header "Pods-CarteraExample-umbrella.h"
+
+  export *
+  module * { export * }
+}

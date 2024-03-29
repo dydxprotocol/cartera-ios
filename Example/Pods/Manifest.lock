@@ -1,0 +1,53 @@
+PODS:
+  - BigInt (5.0.0)
+  - CryptoSwift (1.0.0)
+  - HDWalletKit (0.3.6):
+    - CryptoSwift (~> 1.0.0)
+    - secp256k1.swift (~> 0.1.4)
+  - SDWebImage (5.19.1):
+    - SDWebImage/Core (= 5.19.1)
+  - SDWebImage/Core (5.19.1)
+  - SDWebImageSVGCoder (1.7.0):
+    - SDWebImage/Core (~> 5.6)
+  - secp256k1.swift (0.1.4)
+  - WalletConnectWeb3 (1.0.2):
+    - BigInt (~> 5.0.0)
+    - CryptoSwift (~> 1.0.0)
+    - secp256k1.swift (~> 0.1.1)
+
+DEPENDENCIES:
+  - HDWalletKit
+  - SDWebImage
+  - SDWebImageSVGCoder
+  - WalletConnectWeb3 (from `https://github.com/WalletConnect/Web3.swift`)
+
+SPEC REPOS:
+  trunk:
+    - BigInt
+    - CryptoSwift
+    - HDWalletKit
+    - SDWebImage
+    - SDWebImageSVGCoder
+    - secp256k1.swift
+
+EXTERNAL SOURCES:
+  WalletConnectWeb3:
+    :git: https://github.com/WalletConnect/Web3.swift
+
+CHECKOUT OPTIONS:
+  WalletConnectWeb3:
+    :commit: 569255adcfff0b37e4cb8004aea29d0e2d6266df
+    :git: https://github.com/WalletConnect/Web3.swift
+
+SPEC CHECKSUMS:
+  BigInt: 74b4d88367b0e819d9f77393549226d36faeb0d8
+  CryptoSwift: d81eeaa59dc5a8d03720fe919a6fd07b51f7439f
+  HDWalletKit: 6d97a15404b2edfe3418e3dc064faa967e51dac4
+  SDWebImage: 40b0b4053e36c660a764958bff99eed16610acbb
+  SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
+  secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
+  WalletConnectWeb3: ea04830ba72cf8781e9609951859da1e157f1fb5
+
+PODFILE CHECKSUM: 6d5180d8711d546ee1e48fb23656b7e906e031f1
+
+COCOAPODS: 1.15.2

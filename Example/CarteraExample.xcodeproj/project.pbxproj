@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0217E9C82BB66E7F001C0F28 /* DefaultCryptoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217E9C72BB66E7F001C0F28 /* DefaultCryptoProvider.swift */; };
 		026A31A229AD410B00B198B4 /* CarteraExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026A31A129AD410B00B198B4 /* CarteraExampleTests.swift */; };
 		026F66CA29AD2517004019BA /* Cartera in Frameworks */ = {isa = PBXBuildFile; productRef = 026F66C929AD2517004019BA /* Cartera */; };
 		027A7C4B29A6C93A009116E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027A7C4A29A6C93A009116E4 /* AppDelegate.swift */; };
@@ -17,6 +18,8 @@
 		027A7C5729A6C93B009116E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 027A7C5529A6C93B009116E4 /* LaunchScreen.storyboard */; };
 		027A7ED829A8679B009116E4 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 027A7ED729A8679B009116E4 /* SDWebImage */; };
 		027CAEFE2A5769440072956B /* QrCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027CAEFD2A5769440072956B /* QrCodeViewController.swift */; };
+		4322C8506F00D80B23B8F784 /* Pods_CarteraExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8D2FB88E57FA27D7AC6A968 /* Pods_CarteraExample.framework */; };
+		72802620BE05714BC8799AB1 /* Pods_CarteraExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16331AA2F9A19EC17AA730FA /* Pods_CarteraExampleTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +45,44 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0217E9C72BB66E7F001C0F28 /* DefaultCryptoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCryptoProvider.swift; sourceTree = "<group>"; };
+		0217EA1D2BB671D7001C0F28 /* WalletConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConfig.swift; sourceTree = "<group>"; };
+		0217EA1E2BB671D7001C0F28 /* WalletModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletModels.swift; sourceTree = "<group>"; };
+		0217EA202BB671D7001C0F28 /* wallets_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = wallets_config.json; sourceTree = "<group>"; };
+		0217EA222BB671D7001C0F28 /* EIP712DomainTypedDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EIP712DomainTypedDataProvider.swift; sourceTree = "<group>"; };
+		0217EA232BB671D7001C0F28 /* EIP712TypedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EIP712TypedData.swift; sourceTree = "<group>"; };
+		0217EA242BB671D7001C0F28 /* WalletTypedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTypedData.swift; sourceTree = "<group>"; };
+		0217EA252BB671D7001C0F28 /* WalletTypedDataProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTypedDataProtocols.swift; sourceTree = "<group>"; };
+		0217EA272BB671D7001C0F28 /* Bundle+UIBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+UIBundle.swift"; sourceTree = "<group>"; };
+		0217EA282BB671D7001C0F28 /* CarteraAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarteraAppState.swift; sourceTree = "<group>"; };
+		0217EA292BB671D7001C0F28 /* Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
+		0217EA2A2BB671D7001C0F28 /* CryptoUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoUtils.swift; sourceTree = "<group>"; };
+		0217EA2B2BB671D7001C0F28 /* DefaultCryptoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCryptoProvider.swift; sourceTree = "<group>"; };
+		0217EA2C2BB671D7001C0F28 /* DefaultSocketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSocketFactory.swift; sourceTree = "<group>"; };
+		0217EA2D2BB671D7001C0F28 /* DispatchQueue+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Utils.swift"; sourceTree = "<group>"; };
+		0217EA2E2BB671D7001C0F28 /* HapticFeedbackProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackProtocol.swift; sourceTree = "<group>"; };
+		0217EA2F2BB671D7001C0F28 /* Installation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Installation.swift; sourceTree = "<group>"; };
+		0217EA302BB671D7001C0F28 /* LocalAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticator.swift; sourceTree = "<group>"; };
+		0217EA312BB671D7001C0F28 /* MotionHapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionHapticFeedback.swift; sourceTree = "<group>"; };
+		0217EA322BB671D7001C0F28 /* NotificationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToken.swift; sourceTree = "<group>"; };
+		0217EA332BB671D7001C0F28 /* SingletonProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingletonProtocol.swift; sourceTree = "<group>"; };
+		0217EA342BB671D7001C0F28 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		0217EA352BB671D7001C0F28 /* UrlHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlHandler.swift; sourceTree = "<group>"; };
+		0217EA372BB671D7001C0F28 /* MagicLinkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagicLinkProvider.swift; sourceTree = "<group>"; };
+		0217EA382BB671D7001C0F28 /* WalletConnectUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectUtils.swift; sourceTree = "<group>"; };
+		0217EA392BB671D7001C0F28 /* WalletConnectV1Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectV1Provider.swift; sourceTree = "<group>"; };
+		0217EA3A2BB671D7001C0F28 /* WalletConnectV2Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConnectV2Provider.swift; sourceTree = "<group>"; };
+		0217EA3B2BB671D7001C0F28 /* WalletSegueProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSegueProvider.swift; sourceTree = "<group>"; };
+		0217EA3D2BB671D7001C0F28 /* SimpleWalletUserConsent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleWalletUserConsent.swift; sourceTree = "<group>"; };
+		0217EA3E2BB671D7001C0F28 /* SkippedWalletUserConsent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkippedWalletUserConsent.swift; sourceTree = "<group>"; };
+		0217EA402BB671D7001C0F28 /* WalletConsent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletConsent.swift; sourceTree = "<group>"; };
+		0217EA412BB671D7001C0F28 /* WalletError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletError.swift; sourceTree = "<group>"; };
+		0217EA422BB671D7001C0F28 /* WalletProviderProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletProviderProtocols.swift; sourceTree = "<group>"; };
+		0217EA432BB671D7001C0F28 /* WalletStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletStatus.swift; sourceTree = "<group>"; };
+		0217EA452BB671D7001C0F28 /* CarteraConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarteraConfig.swift; sourceTree = "<group>"; };
+		0217EA462BB671D7001C0F28 /* CarteraErrorCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarteraErrorCode.swift; sourceTree = "<group>"; };
+		0217EA472BB671D7001C0F28 /* CarteraProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarteraProvider.swift; sourceTree = "<group>"; };
+		0217EA482BB671D7001C0F28 /* CarteraResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarteraResources.swift; sourceTree = "<group>"; };
 		026A319F29AD410B00B198B4 /* CarteraExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarteraExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		026A31A129AD410B00B198B4 /* CarteraExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarteraExampleTests.swift; sourceTree = "<group>"; };
 		026A33AE29AD487B00B198B4 /* cartera-ios */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "cartera-ios"; path = ..; sourceTree = "<group>"; };
@@ -55,6 +96,12 @@
 		027A7C5829A6C93B009116E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		027CAEFD2A5769440072956B /* QrCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeViewController.swift; sourceTree = "<group>"; };
 		02CAD9E429C2401800D6076C /* CarteraExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CarteraExample.entitlements; sourceTree = "<group>"; };
+		16331AA2F9A19EC17AA730FA /* Pods_CarteraExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarteraExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		68D799CB3C6FB86F4D1A1918 /* Pods-CarteraExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarteraExample.release.xcconfig"; path = "Target Support Files/Pods-CarteraExample/Pods-CarteraExample.release.xcconfig"; sourceTree = "<group>"; };
+		6CA1BEAEBC80ADDD1062371E /* Pods-CarteraExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarteraExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-CarteraExampleTests/Pods-CarteraExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8CA2194C6D5EEE79ECCF7400 /* Pods-CarteraExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarteraExample.debug.xcconfig"; path = "Target Support Files/Pods-CarteraExample/Pods-CarteraExample.debug.xcconfig"; sourceTree = "<group>"; };
+		9F17FDFD7EE561B8D11FF9DD /* Pods-CarteraExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarteraExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CarteraExampleTests/Pods-CarteraExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		A8D2FB88E57FA27D7AC6A968 /* Pods_CarteraExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarteraExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72802620BE05714BC8799AB1 /* Pods_CarteraExampleTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,12 +119,113 @@
 			files = (
 				027A7ED829A8679B009116E4 /* SDWebImage in Frameworks */,
 				026F66CA29AD2517004019BA /* Cartera in Frameworks */,
+				4322C8506F00D80B23B8F784 /* Pods_CarteraExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0217EA1F2BB671D7001C0F28 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA1D2BB671D7001C0F28 /* WalletConfig.swift */,
+				0217EA1E2BB671D7001C0F28 /* WalletModels.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		0217EA212BB671D7001C0F28 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA202BB671D7001C0F28 /* wallets_config.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		0217EA262BB671D7001C0F28 /* TypedData */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA222BB671D7001C0F28 /* EIP712DomainTypedDataProvider.swift */,
+				0217EA232BB671D7001C0F28 /* EIP712TypedData.swift */,
+				0217EA242BB671D7001C0F28 /* WalletTypedData.swift */,
+				0217EA252BB671D7001C0F28 /* WalletTypedDataProtocols.swift */,
+			);
+			path = TypedData;
+			sourceTree = "<group>";
+		};
+		0217EA362BB671D7001C0F28 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA272BB671D7001C0F28 /* Bundle+UIBundle.swift */,
+				0217EA282BB671D7001C0F28 /* CarteraAppState.swift */,
+				0217EA292BB671D7001C0F28 /* Console.swift */,
+				0217EA2A2BB671D7001C0F28 /* CryptoUtils.swift */,
+				0217EA2B2BB671D7001C0F28 /* DefaultCryptoProvider.swift */,
+				0217EA2C2BB671D7001C0F28 /* DefaultSocketFactory.swift */,
+				0217EA2D2BB671D7001C0F28 /* DispatchQueue+Utils.swift */,
+				0217EA2E2BB671D7001C0F28 /* HapticFeedbackProtocol.swift */,
+				0217EA2F2BB671D7001C0F28 /* Installation.swift */,
+				0217EA302BB671D7001C0F28 /* LocalAuthenticator.swift */,
+				0217EA312BB671D7001C0F28 /* MotionHapticFeedback.swift */,
+				0217EA322BB671D7001C0F28 /* NotificationToken.swift */,
+				0217EA332BB671D7001C0F28 /* SingletonProtocol.swift */,
+				0217EA342BB671D7001C0F28 /* String+Utils.swift */,
+				0217EA352BB671D7001C0F28 /* UrlHandler.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		0217EA3C2BB671D7001C0F28 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA372BB671D7001C0F28 /* MagicLinkProvider.swift */,
+				0217EA382BB671D7001C0F28 /* WalletConnectUtils.swift */,
+				0217EA392BB671D7001C0F28 /* WalletConnectV1Provider.swift */,
+				0217EA3A2BB671D7001C0F28 /* WalletConnectV2Provider.swift */,
+				0217EA3B2BB671D7001C0F28 /* WalletSegueProvider.swift */,
+			);
+			path = Providers;
+			sourceTree = "<group>";
+		};
+		0217EA3F2BB671D7001C0F28 /* UserConsent */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA3D2BB671D7001C0F28 /* SimpleWalletUserConsent.swift */,
+				0217EA3E2BB671D7001C0F28 /* SkippedWalletUserConsent.swift */,
+			);
+			path = UserConsent;
+			sourceTree = "<group>";
+		};
+		0217EA442BB671D7001C0F28 /* WalletProvider */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA3C2BB671D7001C0F28 /* Providers */,
+				0217EA3F2BB671D7001C0F28 /* UserConsent */,
+				0217EA402BB671D7001C0F28 /* WalletConsent.swift */,
+				0217EA412BB671D7001C0F28 /* WalletError.swift */,
+				0217EA422BB671D7001C0F28 /* WalletProviderProtocols.swift */,
+				0217EA432BB671D7001C0F28 /* WalletStatus.swift */,
+			);
+			path = WalletProvider;
+			sourceTree = "<group>";
+		};
+		0217EA492BB671D7001C0F28 /* Cartera */ = {
+			isa = PBXGroup;
+			children = (
+				0217EA1F2BB671D7001C0F28 /* Entities */,
+				0217EA212BB671D7001C0F28 /* Resources */,
+				0217EA262BB671D7001C0F28 /* TypedData */,
+				0217EA362BB671D7001C0F28 /* Utilities */,
+				0217EA442BB671D7001C0F28 /* WalletProvider */,
+				0217EA452BB671D7001C0F28 /* CarteraConfig.swift */,
+				0217EA462BB671D7001C0F28 /* CarteraErrorCode.swift */,
+				0217EA472BB671D7001C0F28 /* CarteraProvider.swift */,
+				0217EA482BB671D7001C0F28 /* CarteraResources.swift */,
+			);
+			path = Cartera;
+			sourceTree = SOURCE_ROOT;
+		};
 		0218DD8829AACFF9000AB263 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +250,7 @@
 				026A31A029AD410B00B198B4 /* CarteraExampleTests */,
 				027A7C4829A6C93A009116E4 /* Products */,
 				027A7C7129A6D9EA009116E4 /* Frameworks */,
+				98FBC1572A661CA9BF9FE0AE /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,6 +266,7 @@
 		027A7C4929A6C93A009116E4 /* CarteraExample */ = {
 			isa = PBXGroup;
 			children = (
+				0217EA492BB671D7001C0F28 /* Cartera */,
 				02CAD9E429C2401800D6076C /* CarteraExample.entitlements */,
 				027A7C4A29A6C93A009116E4 /* AppDelegate.swift */,
 				027A7C4C29A6C93A009116E4 /* SceneDelegate.swift */,
@@ -125,6 +276,7 @@
 				027A7C5329A6C93B009116E4 /* Assets.xcassets */,
 				027A7C5529A6C93B009116E4 /* LaunchScreen.storyboard */,
 				027A7C5829A6C93B009116E4 /* Info.plist */,
+				0217E9C72BB66E7F001C0F28 /* DefaultCryptoProvider.swift */,
 			);
 			path = CarteraExample;
 			sourceTree = "<group>";
@@ -132,8 +284,21 @@
 		027A7C7129A6D9EA009116E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A8D2FB88E57FA27D7AC6A968 /* Pods_CarteraExample.framework */,
+				16331AA2F9A19EC17AA730FA /* Pods_CarteraExampleTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		98FBC1572A661CA9BF9FE0AE /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8CA2194C6D5EEE79ECCF7400 /* Pods-CarteraExample.debug.xcconfig */,
+				68D799CB3C6FB86F4D1A1918 /* Pods-CarteraExample.release.xcconfig */,
+				6CA1BEAEBC80ADDD1062371E /* Pods-CarteraExampleTests.debug.xcconfig */,
+				9F17FDFD7EE561B8D11FF9DD /* Pods-CarteraExampleTests.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,6 +308,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 026A31A529AD410B00B198B4 /* Build configuration list for PBXNativeTarget "CarteraExampleTests" */;
 			buildPhases = (
+				3234FA113A77EC74CCF1488D /* [CP] Check Pods Manifest.lock */,
 				026A319B29AD410B00B198B4 /* Sources */,
 				026A319C29AD410B00B198B4 /* Frameworks */,
 				026A319D29AD410B00B198B4 /* Resources */,
@@ -161,10 +327,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 027A7C5B29A6C93B009116E4 /* Build configuration list for PBXNativeTarget "CarteraExample" */;
 			buildPhases = (
+				51C6248893BD2FB0C1B418DF /* [CP] Check Pods Manifest.lock */,
 				027A7C4329A6C93A009116E4 /* Sources */,
 				027A7C4429A6C93A009116E4 /* Frameworks */,
 				027A7C4529A6C93A009116E4 /* Resources */,
 				027A7EDA29A93061009116E4 /* CopyFiles */,
+				376D8E8EFEFB6DBFBFDEA8C5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -241,6 +409,70 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		3234FA113A77EC74CCF1488D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CarteraExampleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		376D8E8EFEFB6DBFBFDEA8C5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CarteraExample/Pods-CarteraExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CarteraExample/Pods-CarteraExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CarteraExample/Pods-CarteraExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		51C6248893BD2FB0C1B418DF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CarteraExample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		026A319B29AD410B00B198B4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -255,6 +487,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				027A7C4F29A6C93A009116E4 /* ViewController.swift in Sources */,
+				0217E9C82BB66E7F001C0F28 /* DefaultCryptoProvider.swift in Sources */,
 				027A7C4B29A6C93A009116E4 /* AppDelegate.swift in Sources */,
 				027CAEFE2A5769440072956B /* QrCodeViewController.swift in Sources */,
 				027A7C4D29A6C93A009116E4 /* SceneDelegate.swift in Sources */,
@@ -297,6 +530,7 @@
 /* Begin XCBuildConfiguration section */
 		026A31A629AD410B00B198B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CA1BEAEBC80ADDD1062371E /* Pods-CarteraExampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -315,6 +549,7 @@
 		};
 		026A31A729AD410B00B198B4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9F17FDFD7EE561B8D11FF9DD /* Pods-CarteraExampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -447,6 +682,7 @@
 		};
 		027A7C5C29A6C93B009116E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8CA2194C6D5EEE79ECCF7400 /* Pods-CarteraExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -477,6 +713,7 @@
 		};
 		027A7C5D29A6C93B009116E4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 68D799CB3C6FB86F4D1A1918 /* Pods-CarteraExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
