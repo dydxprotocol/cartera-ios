@@ -530,52 +530,21 @@ extension WalletInfo {
 }
 
 struct Transaction: Codable {
-    let from, to, data, gas: String
-    let gasPrice, value, nonce: String
-    let maxPriorityFeePerGas, maxFeePerGas: String
+    let from, to, data: String
     
     init?(ethereumTransactionRequest: EthereumTransactionRequest) {
         let transaction = ethereumTransactionRequest.transaction
-        let gasPrice = ethereumTransactionRequest.gasPrice
-        let gas = ethereumTransactionRequest.gas
-        let nonce = ethereumTransactionRequest.nonce
         
         if let from = transaction.from {
             let maxPriorityFeePerGas: BigUInt?
             let maxFeePerGas: BigUInt?
-            
-            if let maxPriorityFeePerGasValue = ethereumTransactionRequest.maxPriorityFeePerGas,
-               let maxFeePerGasValue = ethereumTransactionRequest.maxFeePerGas {
-                maxPriorityFeePerGas = BigUInt(maxPriorityFeePerGasValue)
-                maxFeePerGas = BigUInt(maxFeePerGasValue)
-            } else {
-                if let gasPrice = gasPrice {
-                    maxPriorityFeePerGas = BigUInt(1500000000)
-                    maxFeePerGas = (maxPriorityFeePerGas! + gasPrice) * 11 / 10
-                } else {
-                    maxPriorityFeePerGas = nil
-                    maxFeePerGas = nil
-                }
-            }
 
             let dataText = transaction.data?.web3.hexString
-            let gasText = gas?.web3.hexString
-            let gasPriceText = gasPrice?.web3.hexString
             let valueText = transaction.value?.web3.hexString
-            let nonce: String? = nonce?.web3.hexString
-            let maxPriorityFeePerGasText = maxPriorityFeePerGas?.web3.hexString
-            let maxFeePerGasText = maxFeePerGas?.web3.hexString
 
             self.from = from.asString()
             self.to = transaction.to.asString()
             self.data =  dataText ?? "0x"
-            self.gas = gasText ?? "0x"
-            self.gasPrice = gasPriceText ?? "0x"
-            self.value = valueText ?? "0x"
-            self.nonce = nonce  ?? "0x"
-            self.maxPriorityFeePerGas = maxPriorityFeePerGasText ?? "0x"
-            self.maxFeePerGas = maxFeePerGasText ?? "0x"
-            
         } else {
             return nil
         }

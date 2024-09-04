@@ -243,34 +243,26 @@ private extension Action {
 
             let chainId = transactionRequest.walletRequest.chainId
             let transaction = ethereum.transaction
-            let gasPrice =  ethereum.gasPrice
-            let gas = ethereum.gas
 
             let dataText = transaction.data?.web3.hexString ?? "0x"
-            let gasText = String(bigUInt: gas)
-            let gasPriceText = String(bigUInt: gasPrice)
             let valueText = String(bigUInt: transaction.value) ?? "0"
-            let nonce: Int? = nil
             let chainIdText: String
             if let chainId = chainId {
                 chainIdText = "\(chainId)"
             } else {
                 chainIdText = "1"
             }
-            
-            let maxFeePerGas = String(bigUInt: ethereum.maxFeePerGas)
-            let maxPriorityFeePerGas = String(bigUInt: ethereum.maxPriorityFeePerGas)
 
             self.init(jsonRpc: .eth_sendTransaction(
                 fromAddress: from.asString().uppercased(),
                 toAddress: ethereum.transaction.to.asString(),
                 weiValue: valueText,
                 data: dataText,
-                nonce: nonce,
-                gasPriceInWei: gasPriceText,
-                maxFeePerGas: maxFeePerGas,
-                maxPriorityFeePerGas: maxPriorityFeePerGas,
-                gasLimit: gasText,
+                nonce: nil,
+                gasPriceInWei: nil,
+                maxFeePerGas: nil,
+                maxPriorityFeePerGas: nil,
+                gasLimit: nil,
                 chainId: chainIdText)
             )
         } else {

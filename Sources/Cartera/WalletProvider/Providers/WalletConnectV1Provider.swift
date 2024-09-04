@@ -256,32 +256,26 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
 
     private func translate(ethereumTransactionRequest: EthereumTransactionRequest) -> Client.Transaction? {
         let transaction = ethereumTransactionRequest.transaction
-        let gasPrice = ethereumTransactionRequest.gasPrice
-        let gas = ethereumTransactionRequest.gas
         
         if let from = transaction.from {
-            let maxPriorityFeePerGas = BigUInt(1500000000)
-            var maxFeePerGas: BigUInt?
-            if let gasPrice = gasPrice {
-                maxFeePerGas = (maxPriorityFeePerGas + gasPrice) * 11 / 10
-            }
 
             let dataText = transaction.data?.web3.hexString
-            let gasText = gas?.web3.hexString
-            let gasPriceText = gasPrice?.web3.hexString
             let valueText = transaction.value?.web3.hexString
-            let nonce: String? = nil // nonce?.web3.hexString, let it be automatic
-            let maxPriorityFeePerGasText = maxPriorityFeePerGas.web3.hexString
-            let maxFeePerGasText = maxFeePerGas?.web3.hexString
 
-            Console.shared.log("Transaction: Gas \(gas?.description ?? "")")
-            Console.shared.log("Transaction: GasPrice \(gasPrice?.description ?? "")")
             Console.shared.log("Transaction: Value \(transaction.value?.description ?? "")")
-            Console.shared.log("Transaction: Nonce \(nonce ?? "")")
-            Console.shared.log("Transaction: maxPriorityFeePerGasText \(maxPriorityFeePerGas.description)")
-            Console.shared.log("Transaction: maxFeePerGasText \(maxFeePerGas?.description ?? "")")
 
-            return Client.Transaction(from: from.asString(), to: transaction.to.asString(), data: dataText ?? "0x", gas: gasText, gasPrice: gasPriceText, value: valueText, nonce: nonce, type: nil, accessList: nil, chainId: nil, maxPriorityFeePerGas: maxPriorityFeePerGasText, maxFeePerGas: maxFeePerGasText)
+            return Client.Transaction(from: from.asString(), 
+                                      to: transaction.to.asString(),
+                                      data: dataText ?? "0x",
+                                      gas: nil,
+                                      gasPrice: nil,
+                                      value: valueText, 
+                                      nonce: nil,
+                                      type: nil,
+                                      accessList: nil,
+                                      chainId: nil,
+                                      maxPriorityFeePerGas: nil,
+                                      maxFeePerGas: nil)
         } else {
             return nil
         }
