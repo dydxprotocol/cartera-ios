@@ -231,10 +231,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                   gasPrice: nil,
                                                   gasLimit: nil,
                                                   chainId: self.chainId)
-            let ethereumRequest = EthereumTransactionRequest(transaction: transaction,
-                                                             gasPrice: BigUInt(10000000),
-                                                             gas: BigUInt(10000000),
-                                                             nonce: nil)
+            let ethereumRequest = EthereumTransactionRequest(transaction: transaction)
             let request = WalletTransactionRequest(walletRequest: walletRequest, ethereum: ethereumRequest)
             self.provider.send(request: request, connected: { info in
                 print("connected: \(info?.address ?? "")")

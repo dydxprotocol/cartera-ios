@@ -13,14 +13,6 @@ final public class SimpleWalletUserConsent: WalletUserConsentProtocol {
     public init() {}
 
     public func showTransactionConsent(request: WalletTransactionRequest, completion: WalletUserConsentCompletion?) {
-        let gasString: String
-        if let gas = request.ethereum?.gas, let gasPrice = request.ethereum?.gasPrice {
-            let gasCost = gas.multiplied(by: gasPrice)
-            let gasDouble = (Double(String(gasCost)) ?? 0.0) / 1_000_000_000
-            gasString = "\(gasDouble) Gwei"
-        } else {
-            gasString = ""
-        }
         let valueString: String
         if let value = request.ethereum?.transaction.value {
             let valueDouble = (Double(String(value)) ?? 0.0) / 1_000_000_000 / 1_000_000_000
@@ -28,7 +20,7 @@ final public class SimpleWalletUserConsent: WalletUserConsentProtocol {
         } else {
             valueString = ""
         }
-        let alert = UIAlertController(title: "Approve this transaction?", message: "Esimated gas: \(gasString).  Transaction value: \(valueString)", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Approve this transaction?", message: "Transaction value: \(valueString)", preferredStyle: .actionSheet)
 
         alert.addAction(UIAlertAction(title: "Approve", style: .default, handler: { _ in
             completion?(.consented)
