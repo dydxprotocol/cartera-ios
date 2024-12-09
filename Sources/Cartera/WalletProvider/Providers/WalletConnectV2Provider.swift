@@ -8,7 +8,6 @@
 import BigInt
 import CryptoKit
 import WalletConnectSign
-import web3
 import UIKit
 import Combine
 
@@ -271,7 +270,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         let chains: Set<Blockchain> = Set([ Blockchain("eip155:\(chainId)")! ])
         let namespaces: [String: ProposalNamespace] = [
             "eip155": ProposalNamespace(
-                chains: chains,
+                chains: Array(chains),
                 methods: Set(methods ?? [
                     "eth_sendTransaction",
                     "personal_sign",
@@ -291,8 +290,8 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             try await Sign.instance.connect(
                 requiredNamespaces: namespaces,
                 optionalNamespaces: optionalNamespaces,
-                sessionProperties: sessionProperties,
-                topic: uri.topic
+                sessionProperties: sessionProperties
+             //   topic: uri.topic
             )
         }
     }
@@ -330,7 +329,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
         
         let payload = AnyCodable([message, account])
-        let request = Request(topic: session.topic, method: "personal_sign", params: payload, chainId: chainId)
+        guard let request = try? Request(topic: session.topic, method: "personal_sign", params: payload, chainId: chainId) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+    
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -359,7 +362,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
         
         let payload = AnyCodable([account, typeDataString])
-        let request = Request(topic: session.topic, method: "eth_signTypedData", params: payload, chainId: chainId)
+        guard let request = try? Request(topic: session.topic, method: "eth_signTypedData", params: payload, chainId: chainId) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+    
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -383,7 +390,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
      
         let payload = AnyCodable([transaction])
-        let request = Request(topic: session.topic, method: "eth_sendTransaction", params: payload, chainId: chainId)
+        guard let request = try? Request(topic: session.topic, method: "eth_sendTransaction", params: payload, chainId: chainId) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+    
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -406,7 +417,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
      
         let payload = AnyCodable([chain])
-        let request = Request(topic: session.topic, method: "wallet_addEthereumChain", params: payload, chainId: chainId)
+        guard let request = try? Request(topic: session.topic, method: "wallet_addEthereumChain", params: payload, chainId: chainId) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+    
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -535,16 +550,13 @@ struct Transaction: Codable {
     init?(ethereumTransactionRequest: EthereumTransactionRequest) {
         let transaction = ethereumTransactionRequest.transaction
         
-        if let from = transaction.from {
-            let maxPriorityFeePerGas: BigUInt?
-            let maxFeePerGas: BigUInt?
-
-            let dataText = transaction.data?.web3.hexString
-            let valueText = transaction.value?.web3.hexString
-
-            self.from = from.asString()
-            self.to = transaction.to.asString()
-            self.data =  dataText ?? "0x"
+        if let from = transaction.from, let to = transaction.to {
+    
+            let dataText = transaction.data.hex()
+         
+            self.from = from.hex(eip55: true)
+            self.to = to.hex(eip55: true)
+            self.data =  dataText
         } else {
             return nil
         }

@@ -119,17 +119,31 @@ public struct CarteraConfig: SingletonProtocol {
         }
 
         if let walletConnectV2Config = walletProvidersConfig.walletConnectV2 {
-            Networking.configure(projectId: walletConnectV2Config.projectId, socketFactory: DefaultSocketFactory())
+            Networking.configure(
+                groupIdentifier: "group.cartera.example",
+                projectId: walletConnectV2Config.projectId,
+                socketFactory: DefaultSocketFactory()
+            )
+            
+            let redirect: AppMetadata.Redirect
+            do {
+                redirect = try AppMetadata.Redirect(native: walletConnectV2Config.redirectNative, universal: walletConnectV2Config.redirectUniversal)
+            } catch {
+                assertionFailure("updateConfigs failed: \(error)")
+                return
+            }
             
             let metadata = AppMetadata(
                 name: walletConnectV2Config.clientName,
                 description: walletConnectV2Config.clientDescription,
                 url: walletConnectV2Config.clientUrl,
                 icons: walletConnectV2Config.iconUrls,
-                redirect: AppMetadata.Redirect(native: walletConnectV2Config.redirectNative, universal: walletConnectV2Config.redirectUniversal)
+                redirect: redirect
             )
             
             Pair.configure(metadata: metadata)
+            
+            Sign.configure(crypto: DefaultCryptoProvider())
         }
     }
     

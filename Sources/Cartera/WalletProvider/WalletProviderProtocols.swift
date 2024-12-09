@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import web3
+import Web3
 import BigInt
 
 public struct WalletRequest: Equatable {

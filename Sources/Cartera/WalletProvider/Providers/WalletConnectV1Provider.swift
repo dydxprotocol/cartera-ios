@@ -8,7 +8,7 @@
 import BigInt
 import CryptoKit
 import WalletConnectSwift
-import web3
+import Web3
 import UIKit
 import Commons
 
@@ -259,14 +259,14 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
         
         if let from = transaction.from {
 
-            let dataText = transaction.data?.web3.hexString
-            let valueText = transaction.value?.web3.hexString
+            let dataText = transaction.data.hex()
+            let valueText = transaction.value?.hex()
 
-            Console.shared.log("Transaction: Value \(transaction.value?.description ?? "")")
+            Console.shared.log("Transaction: Value \(transaction.value?.hex() ?? "")")
 
-            return Client.Transaction(from: from.asString(), 
-                                      to: transaction.to.asString(),
-                                      data: dataText ?? "0x",
+            return Client.Transaction(from: from.hex(eip55: true),
+                                      to: transaction.to?.hex(eip55: true),
+                                      data: dataText,
                                       gas: nil,
                                       gasPrice: nil,
                                       value: valueText, 

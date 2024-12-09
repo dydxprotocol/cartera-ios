@@ -5,6 +5,11 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:trade.stage.dydx.exchange?mode=developer</string>
+		<string>applinks:relay.walletconnect.com</string>
+	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.cartera.example</string>
 	</array>
 </dict>
 </plist>

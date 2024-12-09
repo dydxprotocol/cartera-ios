@@ -8,7 +8,7 @@
 
 import Foundation
 import CoinbaseWalletSDK
-import web3
+import Web3
 import BigInt
 
 final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
@@ -244,8 +244,8 @@ private extension Action {
             let chainId = transactionRequest.walletRequest.chainId
             let transaction = ethereum.transaction
 
-            let dataText = transaction.data?.web3.hexString ?? "0x"
-            let valueText = String(bigUInt: transaction.value) ?? "0"
+            let dataText = transaction.data.hex()
+            let valueText = String(bigUInt: transaction.value?.quantity) ?? "0"
             let chainIdText: String
             if let chainId = chainId {
                 chainIdText = "\(chainId)"
@@ -254,8 +254,8 @@ private extension Action {
             }
 
             self.init(jsonRpc: .eth_sendTransaction(
-                fromAddress: from.asString().uppercased(),
-                toAddress: ethereum.transaction.to.asString(),
+                fromAddress: from.hex(eip55: true).uppercased(),
+                toAddress: ethereum.transaction.to?.hex(eip55: true),
                 weiValue: valueText,
                 data: dataText,
                 nonce: nil,

@@ -8,7 +8,7 @@
 import UIKit
 import Cartera
 import SDWebImage
-import web3
+import Web3
 import BigInt
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, WalletStatusDelegate {
@@ -223,14 +223,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 return
             }
             let walletRequest = WalletRequest(wallet: wallet, address: nil, chainId: self.chainId)
-            let transaction = EthereumTransaction(from: EthereumAddress(stringLiteral: address),
-                                                  to: EthereumAddress.zero,
-                                                  value: 0,
-                                                  data: nil,
-                                                  nonce: nil,
-                                                  gasPrice: nil,
-                                                  gasLimit: nil,
-                                                  chainId: self.chainId)
+            let transaction: EthereumTransaction
+            do {
+                transaction = try EthereumTransaction(from: EthereumAddress(hex: address, eip55: true),
+                                                      to: EthereumAddress(hex: "0x0000000000000000000000000000000000000000", eip55: true)
+                )
+            } catch {
+                showError(error: error)
+                return
+            }
+
             let ethereumRequest = EthereumTransactionRequest(transaction: transaction)
             let request = WalletTransactionRequest(walletRequest: walletRequest, ethereum: ethereumRequest)
             self.provider.send(request: request, connected: { info in
