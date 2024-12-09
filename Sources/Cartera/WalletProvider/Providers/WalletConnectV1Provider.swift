@@ -264,8 +264,8 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
 
             Console.shared.log("Transaction: Value \(transaction.value?.hex() ?? "")")
 
-            return Client.Transaction(from: from.hex(eip55: true),
-                                      to: transaction.to?.hex(eip55: true),
+            return Client.Transaction(from: from.hex(eip55: false),
+                                      to: transaction.to?.hex(eip55: false),
                                       data: dataText,
                                       gas: nil,
                                       gasPrice: nil,

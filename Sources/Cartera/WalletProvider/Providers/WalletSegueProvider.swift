@@ -59,7 +59,7 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
                             let errorTitle = "Network Mismatch"
                             let errorMessage = expectedChainId == 1 ?
                                 "Set your wallet network to 'Ethereum Mainnet'." :
-                                "set your wallet network to 'Goerli Test Network'"
+                                "set your wallet network to 'Sepolia Test Network'"
                             completion(nil, WalletError.error(code: .networkMismatch, title: errorTitle, message: errorMessage))
 
                         } else if let expectedEthereumAddress = expected.address, expectedEthereumAddress.lowercased() != account.address.lowercased() {
@@ -254,8 +254,8 @@ private extension Action {
             }
 
             self.init(jsonRpc: .eth_sendTransaction(
-                fromAddress: from.hex(eip55: true).uppercased(),
-                toAddress: ethereum.transaction.to?.hex(eip55: true),
+                fromAddress: from.hex(eip55: false).uppercased(),
+                toAddress: ethereum.transaction.to?.hex(eip55: false),
                 weiValue: valueText,
                 data: dataText,
                 nonce: nil,

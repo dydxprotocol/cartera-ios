@@ -18,8 +18,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet var walletLabel: UILabel?
     @IBOutlet var connectedDeepLinkLabel: UILabel?
   
+    private let testnetChainId: Int = 11155111
+    
     private var chainId: Int {
-        chainSegmentControl?.selectedSegmentIndex == 0 ? 1 : 5
+        chainSegmentControl?.selectedSegmentIndex == 0 ? 1 : testnetChainId
     }
     
     private lazy var provider: CarteraProvider = {
@@ -37,14 +39,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                           scheme: "dydx:",
                                                           clientUrl: "https://trade.dydx.exchange/",
                                                           bridgeUrl: "<WC1_BRIDGE_URL>")
-        let walletConnectV2Config = WalletConnectV2Config(projectId: "<WC2_PROJECT_ID>",
+        let walletConnectV2Config = WalletConnectV2Config(projectId: "47559b2ec96c09aed9ff2cb54a31ab0e",
                                                           clientName: "dYdX",
                                                           clientDescription: "dYdX Trading App",
                                                           clientUrl: "https://trade.dydx.exchange/",
                                                           iconUrls: ["https://media.dydx.exchange/logos/dydx-x.png"],
                                                           redirectNative: "dydxV4",
                                                           redirectUniversal: "https://trade.dydx.exchange/")
-        let walletSegueConfig = WalletSegueConfig(callbackUrl: "<WS_CALLBACK_URL>")
+        let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://trade.stage.dydx.exchange/walletsegueCarteraExample")
         return  WalletProvidersConfig(walletConnectV1: walletConnectV1Config,
                                       walletConnectV2: walletConnectV2Config,
                                       walletSegue: walletSegueConfig)
@@ -61,7 +63,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBAction func qrCodeScan() {
         qrCodeStarted = true
-        provider.startDebugLink(chainId: 5) { [weak self] info, error in
+        provider.startDebugLink(chainId: chainId) { [weak self] info, error in
             if let error = error {
                 print(error)
             } else if let info = info {
@@ -225,8 +227,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let walletRequest = WalletRequest(wallet: wallet, address: nil, chainId: self.chainId)
             let transaction: EthereumTransaction
             do {
-                transaction = try EthereumTransaction(from: EthereumAddress(hex: address, eip55: true),
-                                                      to: EthereumAddress(hex: "0x0000000000000000000000000000000000000000", eip55: true)
+                transaction = try EthereumTransaction(from: EthereumAddress(hex: address, eip55: false),
+                                                      to: EthereumAddress(hex: "0x0000000000000000000000000000000000000000", eip55: false)
                 )
             } catch {
                 showError(error: error)

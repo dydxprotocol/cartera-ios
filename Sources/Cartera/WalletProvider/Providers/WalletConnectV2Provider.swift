@@ -117,8 +117,10 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 
                 DispatchQueue.main.async { [weak self] in
                     self?.executeWithDeeplink(request: request) { success in
-                        if success, let uri = self?.uri {
-                            self?.doConnect(uri: uri, chainId: request.chainId, methods: request.wallet?.config?.methods)
+                        if success, self?.uri != nil {
+                            Task {
+                                self?.uri = await self?.doConnect(chainId: request.chainId, methods: request.wallet?.config?.methods)
+                            }
                         } else {
                             completion(nil, WalletError.error(code: .linkOpenFailed))
                         }
@@ -264,7 +266,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
     }
     
-    private func doConnect(uri: WalletConnectURI, chainId: Int?, methods: [String]?) {
+    private func doConnect(chainId: Int?, methods: [String]?) async -> WalletConnectURI? {
         Console.shared.log("[PROPOSER] Connecting to a pairing...")
         let chainId = chainId ?? 1
         let chains: Set<Blockchain> = Set([ Blockchain("eip155:\(chainId)")! ])
@@ -274,8 +276,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 methods: Set(methods ?? [
                     "eth_sendTransaction",
                     "personal_sign",
-                    "eth_signTypedData",
-                    "wallet_addEthereumChain"
+                    "eth_signTypedData"
                 ]),
                 events: [
                 ]
@@ -286,14 +287,17 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             "caip154-mandatory": "true"
         ]
         
-        Task {
-            try await Sign.instance.connect(
+        do {
+            return try await Sign.instance.connect(
                 requiredNamespaces: namespaces,
                 optionalNamespaces: optionalNamespaces,
                 sessionProperties: sessionProperties
-             //   topic: uri.topic
             )
+        } catch {
+            Console.shared.log(error)
+            return nil
         }
+        
     }
     
     private func doDisconnectAsync() async {
@@ -519,6 +523,20 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 }
             }
             .store(in: &publishers)
+        
+        Sign.instance.sessionEventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { (event: Session.Event, sessionTopic: String, chainId: Blockchain?) in
+                Console.shared.log("WalletConnectV2 sessionEventPublisher: \(sessionTopic)")
+            }
+            .store(in: &publishers)
+        
+        Sign.instance.sessionsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { sessions in
+                Console.shared.log("WalletConnectV2 sessionsPublisher: \(sessions.count)")
+            }
+            .store(in: &publishers)
     }
 
 }
@@ -554,8 +572,8 @@ struct Transaction: Codable {
     
             let dataText = transaction.data.hex()
          
-            self.from = from.hex(eip55: true)
-            self.to = to.hex(eip55: true)
+            self.from = from.hex(eip55: false)
+            self.to = to.hex(eip55: false)
             self.data =  dataText
         } else {
             return nil
