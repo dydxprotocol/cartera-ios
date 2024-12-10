@@ -10,6 +10,7 @@ import CryptoKit
 import WalletConnectSign
 import UIKit
 import Combine
+import WalletConnectModal
 
 final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
@@ -75,7 +76,10 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     
     var userConsentDelegate: WalletUserConsentProtocol?
     
-    override init() {
+    private let useModal: Bool
+    
+    init(useModal: Bool) {
+        self.useModal = useModal
         super.init()
         
         observeChanges()
@@ -104,6 +108,10 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         } else {
             requestingWallet = request.wallet
             connectCompletions.append(completion)
+        
+            if useModal {
+                WalletConnectModal.present()
+            }
             
             Task {
                 do {
@@ -257,7 +265,11 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     }
     
     private func executeWithDeeplink(request: WalletRequest, block: @escaping ((Bool) -> Void)) {
-        if request.wallet != nil {
+        if request.useModal {
+            openLaunchDeeplinkForModal() { success in
+                block(success)
+            }
+        } else if request.wallet != nil {
             openLaunchDeeplink() { success in
                 block(success)
             }
@@ -464,6 +476,22 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         } else {
             completion?(true)
           //  openUrlCompletions.append(completion)
+        }
+    }
+    
+    private func openLaunchDeeplinkForModal(completion: ((Bool) -> Void)? = nil) {
+        if background == false {
+            let urlString = currentSession?.peer.redirect?.native ?? currentSession?.peer.redirect?.universal
+            if let urlString = urlString, let url = URL(string: urlString),
+               let urlHandler = URLHandler.shared,
+               urlHandler.canOpenURL(url) {
+                beginBackgroundTask()
+                urlHandler.open(url, completionHandler: completion)
+            } else {
+                completion?(false)
+            }
+        } else {
+            completion?(true)
         }
     }
     

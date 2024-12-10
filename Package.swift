@@ -33,6 +33,7 @@ let package = Package(
                 "BigInt",
                 "WalletConnectSwift",
                 .product(name: "WalletConnect", package: "WalletConnectSwiftV2"),
+                .product(name: "WalletConnectModal", package: "WalletConnectSwiftV2"),
                 "Starscream",
                 .product(name: "HDWalletKit", package: "HDWallet"),
                 .product(name: "Web3", package: "Web3.swift")

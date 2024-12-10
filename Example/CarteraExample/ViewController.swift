@@ -78,16 +78,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "cell") {
-            let wallet = CarteraConfig.shared.wallets[indexPath.row]
-            cell.textLabel?.text = wallet.name
-            if let url = wallet.config?.imageUrl {
-                cell.imageView?.sd_setImage(with: URL(string: url))
+            if indexPath.section == 0 {
+                let wallet = CarteraConfig.shared.wallets[indexPath.row]
+                cell.textLabel?.text = wallet.name
+                if let url = wallet.config?.imageUrl {
+                    cell.imageView?.sd_setImage(with: URL(string: url))
+                }
+                if wallet.config?.installed ?? false {
+                    cell.detailTextLabel?.text = "Installed"
+                } else {
+                    cell.detailTextLabel?.text = "Install..."
+                }
+            } else if indexPath.section == 1 {
+                cell.textLabel?.text = "WalletConnect Modal"
+                cell.detailTextLabel?.text = ""
             }
-            if wallet.config?.installed ?? false {
-                cell.detailTextLabel?.text = "Installed"
-            } else {
-                cell.detailTextLabel?.text = "Install..."
-            }
+
             return cell
         }
              
@@ -95,23 +101,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        1
+        2
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        CarteraConfig.shared.wallets.count
+        if section == 0 {
+            return CarteraConfig.shared.wallets.count
+        } else if section == 1 {
+            return 1
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let wallet = CarteraConfig.shared.wallets[indexPath.row]
-        if wallet.config?.installed ?? false {
-            showTestOptions(wallet: wallet)
-        } else {
-            if let link = wallet.appLink, let url = URL(string: link), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url, options: [:])
+        if indexPath.section == 0 {
+            let wallet = CarteraConfig.shared.wallets[indexPath.row]
+            if wallet.config?.installed ?? false {
+                showTestOptions(wallet: wallet)
+            } else {
+                if let link = wallet.appLink, let url = URL(string: link), UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url, options: [:])
+                }
             }
+        } else if indexPath.section == 1 {
+            showTestOptions(wallet: nil)
         }
     }
     
@@ -176,7 +191,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func testConnect(wallet: Wallet?) {
-        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId)
+        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.connect(request: request, completion: { [weak self] info, error in
             if let error = error {
                 self?.showError(error: error)
@@ -187,7 +202,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func testSignMessage(wallet: Wallet?) {
-        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId)
+        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.signMessage(request: request, message: "Test Message", connected: { info in
             print("connected: \(info?.address ?? "")")
         }, completion: { [weak self] signed, error in
@@ -203,7 +218,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let dydxSign = EIP712DomainTypedDataProvider(name: "dYdX", chainId: chainId, version: nil)
         dydxSign.message = message(action: "Sample Action", chainId: chainId)
      
-        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId)
+        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.sign(request: request, typedDataProvider: dydxSign, connected: { info in
             print("connected: \(info?.address ?? "")")
         }, completion: { [weak self] signed, error in
@@ -216,7 +231,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func testSendTransaction(wallet: Wallet?) {
-        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId)
+        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.connect(request: request, completion: { [weak self] info, error in
             guard let self = self, let info = info, let address = info.address else {
                 if let error = error {
@@ -224,7 +239,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
                 return
             }
-            let walletRequest = WalletRequest(wallet: wallet, address: nil, chainId: self.chainId)
+            let walletRequest = WalletRequest(wallet: wallet, address: nil, chainId: self.chainId, useModal: wallet == nil)
             let transaction: EthereumTransaction
             do {
                 transaction = try EthereumTransaction(from: EthereumAddress(hex: address, eip55: false),
@@ -250,7 +265,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func testAddChain(wallet: Wallet?) {
-        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId)
+        let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         let payload: String =
 """
         {

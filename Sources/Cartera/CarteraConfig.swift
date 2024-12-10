@@ -9,10 +9,12 @@ import Foundation
 import CoinbaseWalletSDK
 import UIKit
 import WalletConnectSign
+import WalletConnectModal
 
 public enum WalletConnectionType: Hashable {
     case walletConnect
     case walletConnectV2
+    case walletConnectModal
     case walletSegue
     case magicLink
     case custom(String)
@@ -23,6 +25,8 @@ public enum WalletConnectionType: Hashable {
             self = .walletConnect
         } else if rawValue == "walletConnectV2" {
             self = .walletConnectV2
+        } else if rawValue == "walletConnectModal" {
+            self = .walletConnectModal
         } else if rawValue == "walletSegue" {
             self = .walletSegue
         } else if rawValue == "magicLink" {
@@ -38,6 +42,8 @@ public enum WalletConnectionType: Hashable {
             return "walletConnect"
         case .walletConnectV2:
             return "walletConnectV2"
+        case .walletConnectModal:
+            return "walletConnectModal"
         case .walletSegue:
             return "walletSegue"
         case .magicLink:
@@ -144,6 +150,11 @@ public struct CarteraConfig: SingletonProtocol {
             Pair.configure(metadata: metadata)
             
             Sign.configure(crypto: DefaultCryptoProvider())
+            
+            WalletConnectModal.configure(
+                projectId: walletConnectV2Config.projectId,
+                metadata: metadata
+            )
         }
     }
     
@@ -155,7 +166,8 @@ public struct CarteraConfig: SingletonProtocol {
     private lazy var registration: [WalletConnectionType: RegistrationConfig] = {
         [
             .walletConnect: RegistrationConfig(provider: WalletConnectV1Provider(), consent: nil),
-            .walletConnectV2: RegistrationConfig(provider: WalletConnectV2Provider(), consent: nil),
+            .walletConnectV2: RegistrationConfig(provider: WalletConnectV2Provider(useModal:false), consent: nil),
+            .walletConnectModal: RegistrationConfig(provider: WalletConnectV2Provider(useModal:true), consent: nil),
             .walletSegue: RegistrationConfig(provider: WalletSegueProvider(), consent: nil),
         //    .magicLink: RegistrationConfig(provider: MagicLinkProvider(), consent: nil)
         ]

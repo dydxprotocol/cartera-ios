@@ -16,7 +16,8 @@ public final class CarteraProvider: NSObject, WalletOperationProviderProtocol {
         currentRequestHandler = CarteraConfig.shared.getProvider(of: debugLinkHandler)
         userConsentDelegate = SkippedWalletUserConsent()
         currentRequestHandler?.walletStatusDelegate = walletStatusDelegate
-        currentRequestHandler?.connect(request: WalletRequest(wallet: nil, address: nil, chainId: chainId), completion: completion)
+        let request = WalletRequest(wallet: nil, address: nil, chainId: chainId, useModal: false)
+        currentRequestHandler?.connect(request: request, completion: completion)
     }
     
     deinit {
@@ -76,7 +77,7 @@ public final class CarteraProvider: NSObject, WalletOperationProviderProtocol {
     public func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         updateCurrentHandler(request: request)
         // Disregard chainId, since we don't want to check for chainId match here.
-        let request = WalletRequest(wallet: request.wallet, address: nil, chainId: nil)
+        let request = WalletRequest(wallet: request.wallet, address: nil, chainId: nil, useModal: request.useModal)
         currentRequestHandler?.addChain(request: request, chain: chain, timeOut: timeOut, connected: connected, completion: completion)
     }
     
@@ -84,7 +85,9 @@ public final class CarteraProvider: NSObject, WalletOperationProviderProtocol {
     
     private func updateCurrentHandler(request: WalletRequest) {
         var newHandler: WalletOperationProviderProtocol?
-        if let connectionType = request.wallet?.config?.connectionType {
+        if request.useModal {
+            newHandler = CarteraConfig.shared.getProvider(of: .walletConnectModal)
+        } else if let connectionType = request.wallet?.config?.connectionType {
             newHandler = CarteraConfig.shared.getProvider(of: connectionType)
         } else {
             newHandler = CarteraConfig.shared.getProvider(of: debugLinkHandler) // Debug QR-Code

@@ -14,11 +14,13 @@ public struct WalletRequest: Equatable {
     public let wallet: Wallet?
     public let address: String?
     public let chainId: Int?
+    public let useModal: Bool
 
-    public init(wallet: Wallet?, address: String?, chainId: Int?) {
+    public init(wallet: Wallet?, address: String?, chainId: Int?, useModal: Bool) {
         self.wallet = wallet
         self.address = address
         self.chainId = chainId
+        self.useModal = useModal
     }
 }
 
