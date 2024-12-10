@@ -76,10 +76,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     
     var userConsentDelegate: WalletUserConsentProtocol?
     
-    private let useModal: Bool
-    
-    init(useModal: Bool) {
-        self.useModal = useModal
+    override init() {
         super.init()
         
         observeChanges()
@@ -95,9 +92,9 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     deinit {
         disconnect()
     }
-     
+    
     func connect(request: WalletRequest, completion: @escaping WalletConnectCompletion) {
-        if let connectedWallet = _walletStatus.connectedWallet, request.wallet != nil, connectedWallet.wallet != request.wallet {
+        if let connectedWallet = _walletStatus.connectedWallet, connectedWallet.wallet != request.wallet {
             Task {
                 await doDisconnectAsync()
             }
@@ -109,11 +106,13 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             requestingWallet = request.wallet
             connectCompletions.append(completion)
         
-            if useModal {
+            if request.useModal {
                 WalletConnectModal.present()
             }
             
-            Task {
+            Task { [weak self] in
+                guard let self else { return }
+                
                 do {
                     if self.uri == nil {
                         Console.shared.log("Creating WalletConnectV2 pair")
@@ -121,15 +120,14 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                     }
                 } catch {
                     Console.shared.log(error)
+                    return
                 }
                 
+                self.uri = await doConnect(chainId: request.chainId, methods: request.wallet?.config?.methods)
+            
                 DispatchQueue.main.async { [weak self] in
                     self?.executeWithDeeplink(request: request) { success in
-                        if success, self?.uri != nil {
-                            Task {
-                                self?.uri = await self?.doConnect(chainId: request.chainId, methods: request.wallet?.config?.methods)
-                            }
-                        } else {
+                        if !success {
                             completion(nil, WalletError.error(code: .linkOpenFailed))
                         }
                     }
@@ -170,7 +168,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     func sign(request: WalletRequest, typedDataProvider: WalletTypedDataProviderProtocol?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         LocalAuthenticator.shared?.paused = true
         connect(request: request) { [weak self] _, error in
@@ -265,13 +263,13 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     }
     
     private func executeWithDeeplink(request: WalletRequest, block: @escaping ((Bool) -> Void)) {
-        if request.useModal {
-            openLaunchDeeplinkForModal() { success in
-                block(success)
-            }
-        } else if request.wallet != nil {
+        if request.wallet != nil || request.useModal {
             openLaunchDeeplink() { success in
-                block(success)
+                if request.useModal {
+                    block(true)     // WC Modal will open the applinkk, so no need to show error
+                } else {
+                    block(success)
+                }
             }
         } else {
             block(true)
@@ -300,11 +298,12 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         ]
         
         do {
-            return try await Sign.instance.connect(
+            let ret = try await Sign.instance.connect(
                 requiredNamespaces: namespaces,
                 optionalNamespaces: optionalNamespaces,
                 sessionProperties: sessionProperties
             )
+            return ret
         } catch {
             Console.shared.log(error)
             return nil
@@ -463,35 +462,25 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
 
     private func openLaunchDeeplink(completion: ((Bool) -> Void)? = nil) {
         if background == false {
-            if let wallet = _walletStatus.connectedWallet?.wallet ?? requestingWallet,
-               let deeplink = uri?.absoluteString,
-               let url = WalletConnectUtils.createUrl(wallet: wallet, deeplink: deeplink, type: .walletConnectV2),
-               let urlHandler = URLHandler.shared,
-               urlHandler.canOpenURL(url) {
-                beginBackgroundTask()
-                urlHandler.open(url, completionHandler: completion)
-            } else {
-                completion?(false)
-            }
-        } else {
-            completion?(true)
-          //  openUrlCompletions.append(completion)
-        }
-    }
-    
-    private func openLaunchDeeplinkForModal(completion: ((Bool) -> Void)? = nil) {
-        if background == false {
             let urlString = currentSession?.peer.redirect?.native ?? currentSession?.peer.redirect?.universal
             if let urlString = urlString, let url = URL(string: urlString),
                let urlHandler = URLHandler.shared,
                urlHandler.canOpenURL(url) {
                 beginBackgroundTask()
                 urlHandler.open(url, completionHandler: completion)
+            } else if let wallet = _walletStatus.connectedWallet?.wallet ?? requestingWallet,
+                      let deeplink = uri?.absoluteString,
+                      let url = WalletConnectUtils.createUrl(wallet: wallet, deeplink: deeplink, type: .walletConnectV2),
+                      let urlHandler = URLHandler.shared,
+                      urlHandler.canOpenURL(url) {
+                beginBackgroundTask()
+                urlHandler.open(url, completionHandler: completion)
             } else {
                 completion?(false)
             }
         } else {
             completion?(true)
+            //  openUrlCompletions.append(completion)
         }
     }
     
@@ -586,7 +575,7 @@ extension WalletInfo {
          } else {
              imageUrl = nil
          }
-         self.init(address: address, chainId: chainId, wallet: wallet, peerName: name, peerImageUrl: imageUrl)
+        self.init(address: address, chainId: chainId, wallet: wallet, peerName: name, peerImageUrl: imageUrl)
      }
 }
 

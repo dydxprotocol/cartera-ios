@@ -126,7 +126,7 @@ public struct CarteraConfig: SingletonProtocol {
 
         if let walletConnectV2Config = walletProvidersConfig.walletConnectV2 {
             Networking.configure(
-                groupIdentifier: "group.cartera.example",
+                groupIdentifier: walletConnectV2Config.appGroupIdentifier, 
                 projectId: walletConnectV2Config.projectId,
                 socketFactory: DefaultSocketFactory()
             )
@@ -163,11 +163,15 @@ public struct CarteraConfig: SingletonProtocol {
         let consent: WalletUserConsentProtocol?
     }
     
+    private lazy var walletConnectV2Provider: WalletConnectV2Provider = {
+        WalletConnectV2Provider()
+    }()
+    
     private lazy var registration: [WalletConnectionType: RegistrationConfig] = {
         [
             .walletConnect: RegistrationConfig(provider: WalletConnectV1Provider(), consent: nil),
-            .walletConnectV2: RegistrationConfig(provider: WalletConnectV2Provider(useModal:false), consent: nil),
-            .walletConnectModal: RegistrationConfig(provider: WalletConnectV2Provider(useModal:true), consent: nil),
+            .walletConnectV2: RegistrationConfig(provider: walletConnectV2Provider, consent: nil),
+            .walletConnectModal: RegistrationConfig(provider: walletConnectV2Provider, consent: nil),
             .walletSegue: RegistrationConfig(provider: WalletSegueProvider(), consent: nil),
         //    .magicLink: RegistrationConfig(provider: MagicLinkProvider(), consent: nil)
         ]
@@ -218,7 +222,7 @@ public struct WalletConnectV1Config: Equatable {
 }
 
 public struct WalletConnectV2Config: Equatable {
-    public init(projectId: String, clientName: String, clientDescription: String, clientUrl: String, iconUrls: [String], redirectNative: String, redirectUniversal: String?) {
+    public init(projectId: String, clientName: String, clientDescription: String, clientUrl: String, iconUrls: [String], redirectNative: String, redirectUniversal: String?, appGroupIdentifier: String) {
         self.projectId = projectId
         self.clientName = clientName
         self.clientDescription = clientDescription
@@ -226,6 +230,7 @@ public struct WalletConnectV2Config: Equatable {
         self.iconUrls = iconUrls
         self.redirectNative = redirectNative
         self.redirectUniversal = redirectUniversal
+        self.appGroupIdentifier = appGroupIdentifier
     }
     
     let projectId: String
@@ -235,6 +240,7 @@ public struct WalletConnectV2Config: Equatable {
     let iconUrls: [String]
     let redirectNative: String
     let redirectUniversal: String?
+    let appGroupIdentifier: String
 }
 
 public struct WalletSegueConfig: Equatable {

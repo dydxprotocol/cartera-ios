@@ -45,7 +45,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                           clientUrl: "https://trade.dydx.exchange/",
                                                           iconUrls: ["https://media.dydx.exchange/logos/dydx-x.png"],
                                                           redirectNative: "dydxV4",
-                                                          redirectUniversal: "https://trade.dydx.exchange/")
+                                                          redirectUniversal: "https://trade.dydx.exchange/",
+                                                          appGroupIdentifier: "group.cartera.example")
         let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://trade.stage.dydx.exchange/walletsegueCarteraExample")
         return  WalletProvidersConfig(walletConnectV1: walletConnectV1Config,
                                       walletConnectV2: walletConnectV2Config,

@@ -8,7 +8,7 @@
 public typealias Wallets = [Wallet]
 
 // MARK: - Wallet
-public struct Wallet: Codable, Equatable {
+public struct Wallet: Codable, Equatable, Hashable {
     public let id: String?
     public let name: String?
     public let homepage: String?
@@ -39,7 +39,7 @@ public extension Wallet {
 }
 
 // MARK: - App
-public struct WalletApp: Codable, Equatable {
+public struct WalletApp: Codable, Equatable, Hashable {
     public let browser: String?
     public let ios: String?
     public let android: String?
@@ -50,7 +50,7 @@ public struct WalletApp: Codable, Equatable {
 }
 
 // MARK: - Config
-public struct WalletConfig: Codable, Equatable {
+public struct WalletConfig: Codable, Equatable, Hashable {
     public let displayable: Bool?
     public let iosMinVersion: String?
     public let encoding: String?
@@ -61,31 +61,31 @@ public struct WalletConfig: Codable, Equatable {
 }
 
 // MARK: - Connection
-public struct WalletConnections: Codable, Equatable {
+public struct WalletConnections: Codable, Equatable, Hashable {
     public let type, native: String?
     public let universal: String?
 }
 
 // MARK: - Desktop
-public struct WalletDesktop: Codable, Equatable {
+public struct WalletDesktop: Codable, Equatable, Hashable {
     public let native: String?
     public let universal: String?
 }
 
 // MARK: - Mobile
-public struct WalletMobile: Codable, Equatable {
+public struct WalletMobile: Codable, Equatable, Hashable {
     public let native: String?
     public let universal: String?
 }
 
 // MARK: - Metadata
-public struct WalletMetadata: Codable, Equatable {
+public struct WalletMetadata: Codable, Equatable, Hashable {
     public let shortName: String?
     public let colors: WalletColors?
 }
 
 // MARK: - Colors
-public struct WalletColors: Codable, Equatable {
+public struct WalletColors: Codable, Equatable, Hashable {
     public let primary, secondary: String?
 }
 

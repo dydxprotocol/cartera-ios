@@ -10,7 +10,7 @@ import Foundation
 import Web3
 import BigInt
 
-public struct WalletRequest: Equatable {
+public struct WalletRequest: Equatable, Hashable {
     public let wallet: Wallet?
     public let address: String?
     public let chainId: Int?
