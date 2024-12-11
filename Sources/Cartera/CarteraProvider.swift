@@ -77,7 +77,7 @@ public final class CarteraProvider: NSObject, WalletOperationProviderProtocol {
     public func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         updateCurrentHandler(request: request)
         // Disregard chainId, since we don't want to check for chainId match here.
-        let request = WalletRequest(wallet: request.wallet, address: nil, chainId: nil, useModal: request.useModal)
+        let request = WalletRequest(wallet: request.wallet, address: request.address, chainId: request.chainId, useModal: request.useModal)
         currentRequestHandler?.addChain(request: request, chain: chain, timeOut: timeOut, connected: connected, completion: completion)
     }
     

@@ -246,12 +246,7 @@ private extension Action {
 
             let dataText = transaction.data.hex()
             let valueText = String(bigUInt: transaction.value?.quantity) ?? "0"
-            let chainIdText: String
-            if let chainId = chainId {
-                chainIdText = "\(chainId)"
-            } else {
-                chainIdText = "1"
-            }
+            let chainIdText = "\(chainId)"
 
             self.init(jsonRpc: .eth_sendTransaction(
                 fromAddress: from.hex(eip55: false).uppercased(),
