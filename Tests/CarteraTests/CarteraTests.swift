@@ -6,6 +6,6 @@ final class CarteraTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        //XCTAssertEqual(Cartera_iOS().text, "Hello, World!")
+        // XCTAssertEqual(Cartera_iOS().text, "Hello, World!")
     }
 }

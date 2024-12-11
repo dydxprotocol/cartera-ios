@@ -39,4 +39,3 @@ public extension WalletConfig {
         connections?.first(where: { $0.type == type.rawValue })
     }
 }
-

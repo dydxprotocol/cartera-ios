@@ -17,21 +17,21 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet var statusLabel: UILabel?
     @IBOutlet var walletLabel: UILabel?
     @IBOutlet var connectedDeepLinkLabel: UILabel?
-  
+
     private let testnetChainId: Int = 11155111
-    
+
     private var chainId: Int {
         chainSegmentControl?.selectedSegmentIndex == 0 ? 1 : testnetChainId
     }
-    
+
     private lazy var provider: CarteraProvider = {
          let provider = CarteraProvider()
         provider.walletStatusDelegate = self
         return provider
     }()
-    
+
     private var alertController: UIAlertController?
-    
+
     private let walletProvidersConfig: WalletProvidersConfig = {
         let walletConnectV1Config = WalletConnectV1Config(clientName: "dYdX",
                                                           clientDescription: "dYdX Trading App",
@@ -52,16 +52,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                       walletConnectV2: walletConnectV2Config,
                                       walletSegue: walletSegueConfig)
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         CarteraConfig.shared = CarteraConfig(walletProvidersConfig: walletProvidersConfig)
         CarteraConfig.shared.registerWallets()
     }
-    
+
     private var qrCodeStarted = false
-    
+
     @IBAction func qrCodeScan() {
         qrCodeStarted = true
         provider.startDebugLink(chainId: chainId) { [weak self] info, error in
@@ -74,9 +74,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }
     }
-    
+
     // MARK: UITableViewDelegate, UITableViewDataSource
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "cell") {
             if indexPath.section == 0 {
@@ -97,14 +97,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
             return cell
         }
-             
+
         return UITableViewCell()
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         2
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return CarteraConfig.shared.wallets.count
@@ -113,10 +113,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         return 0
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+
         if indexPath.section == 0 {
             let wallet = CarteraConfig.shared.wallets[indexPath.row]
             if wallet.config?.installed ?? false {
@@ -130,14 +130,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             showTestOptions(wallet: nil)
         }
     }
-    
+
     // MARK: WalletStatusDelegate
-    
+
     func statusChanged(_ status: Cartera.WalletStatusProtocol) {
         statusLabel?.text = "Status: \(status.state.rawValue)"
         walletLabel?.text = "Wallet: \(status.connectedWallet?.wallet?.name ?? "")"
         connectedDeepLinkLabel?.text = "ConnectionDeeplink: \(status.connectionDeeplink ?? "")"
-        
+
         if qrCodeStarted, let deeplink = provider.walletStatus?.connectionDeeplink {
             qrCodeStarted = false
             let qrCodeVC = QrCodeViewController()
@@ -145,9 +145,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             present(qrCodeVC, animated: true, completion: nil)
         }
     }
-    
+
     // MARK: Private
-    
+
     private func showTestOptions(wallet: Wallet?) {
         let alertController = UIAlertController(title: "Select Wallet Action to Test:", message: nil, preferredStyle: .actionSheet)
 
@@ -162,35 +162,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self?.testSignMessage(wallet: wallet)
         }
         alertController.addAction(signPersonalAction)
-        
+
         let sendTypedDataAction = UIAlertAction(title: "Sign TypedData", style: .default) { [weak self] _ in
             self?.alertController?.dismiss(animated: true)
             self?.testSignTypedData(wallet: wallet)
         }
         alertController.addAction(sendTypedDataAction)
-        
+
         let sendTransactionAction = UIAlertAction(title: "Sign Transaction", style: .default) { [weak self] _ in
             self?.alertController?.dismiss(animated: true)
             self?.testSendTransaction(wallet: wallet)
         }
         alertController.addAction(sendTransactionAction)
-        
+
         let addChainAction = UIAlertAction(title: "Add/Switch Chain", style: .default) { [weak self] _ in
             self?.alertController?.dismiss(animated: true)
             self?.testAddChain(wallet: wallet)
         }
         alertController.addAction(addChainAction)
-        
+
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
             self?.alertController?.dismiss(animated: true)
         }
         alertController.addAction(cancelAction)
-        
+
         present(alertController, animated: true, completion: nil)
-        
+
         self.alertController = alertController
     }
-    
+
     private func testConnect(wallet: Wallet?) {
         let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.connect(request: request, completion: { [weak self] info, error in
@@ -201,7 +201,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         })
     }
-    
+
     private func testSignMessage(wallet: Wallet?) {
         let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.signMessage(request: request, message: "Test Message", connected: { info in
@@ -214,11 +214,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         })
     }
-    
+
     private func testSignTypedData(wallet: Wallet?) {
         let dydxSign = EIP712DomainTypedDataProvider(name: "dYdX", chainId: chainId, version: nil)
         dydxSign.message = message(action: "Sample Action", chainId: chainId)
-     
+
         let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.sign(request: request, typedDataProvider: dydxSign, connected: { info in
             print("connected: \(info?.address ?? "")")
@@ -230,7 +230,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         })
     }
-    
+
     private func testSendTransaction(wallet: Wallet?) {
         let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         provider.connect(request: request, completion: { [weak self] info, error in
@@ -264,7 +264,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             })
         })
     }
-    
+
     private func testAddChain(wallet: Wallet?) {
         let request = WalletRequest(wallet: wallet, address: nil, chainId: chainId, useModal: wallet == nil)
         let payload: String =
@@ -290,7 +290,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         })
     }
-    
+
     private func showError(error: Error) {
         let walletError = error as NSError
         if let title = walletError.userInfo["title"] as? String, let message = walletError.userInfo["message"] as? String {
@@ -299,7 +299,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             showAlert(title: "Error", message: "\(error)")
         }
     }
-                        
+
     private func showAlert(title: String?, message: String?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
@@ -309,10 +309,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         alertController.addAction(okAction)
 
         present(alertController, animated: true, completion: nil)
-        
+
         self.alertController = alertController
     }
-    
+
     private func message(action: String, chainId: Int) -> WalletTypedData {
         var definitions = [[String: String]]()
         var data = [String: Any]()
@@ -328,9 +328,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         message.data = data
         return message
     }
-    
+
     private func type(name: String, type: String) -> [String: String] {
         return ["name": name, "type": type]
     }
 }
-

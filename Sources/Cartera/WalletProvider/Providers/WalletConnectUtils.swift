@@ -73,7 +73,7 @@ struct WalletConnectUtils {
         let link = "\(native)//wc?uri=\(encoded)"
         return URL(string: link)
     }
-    
+
     private static func encodeUri(deeplink: String, encoding: String?) -> String {
         if let encoding = encoding {
             let encodingSet = NSCharacterSet(charactersIn: encoding)

@@ -34,7 +34,7 @@ public class EIP712DomainTypedDataProvider: NSObject, WalletTypedDataProviderPro
             return nil
         }
     }
-    
+
     private var valid: Bool {
         return (eip712?.valid ?? false) && (message?.valid ?? false)
     }

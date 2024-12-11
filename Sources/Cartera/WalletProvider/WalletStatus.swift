@@ -13,7 +13,7 @@ public class WalletInfo {
     public var wallet: Wallet?
     public var peerName: String?
     public var peerImageUrl: URL?
-    
+
     public init(address: String?, chainId: Int?, wallet: Wallet?, peerName: String? = nil, peerImageUrl: URL? = nil) {
         self.address = address
         self.chainId = chainId

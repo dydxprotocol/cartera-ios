@@ -23,7 +23,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
     private var config: WalletConnectV1Config? {
         CarteraConfig.shared.walletProvidersConfig.walletConnectV1
     }
-    
+
     private let sessionTag = "\(Swift.type(of: WalletConnectV1Provider.self)).session"
 
     private var expected: WalletInfo?
@@ -84,7 +84,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
 
     private var foregroundToken: NotificationToken?
     private var backgroundToken: NotificationToken?
-    
+
     private var _walletStatus = WalletStatusImp() {
         didSet {
             if _walletStatus.state != oldValue.state {
@@ -99,14 +99,14 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
                     break // revive()
                 }
             }
-            
+
             walletStatusDelegate?.statusChanged(_walletStatus)
         }
     }
-    
+
     override init() {
         super.init()
-        
+
         backgroundToken = NotificationCenter.default.observe(notification: UIApplication.didEnterBackgroundNotification, do: { [weak self] _ in
             self?.background = true
         })
@@ -148,7 +148,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
         case .connectedToWallet:
             connectionCompletion = completion
             runCompletion(_walletStatus.connectedWallet, nil)
-            //revive()
+            // revive()
         }
     }
 
@@ -251,12 +251,12 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     // MARK: Private
 
     private func translate(ethereumTransactionRequest: EthereumTransactionRequest) -> Client.Transaction? {
         let transaction = ethereumTransactionRequest.transaction
-        
+
         if let from = transaction.from {
 
             let dataText = transaction.data.hex()
@@ -269,7 +269,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
                                       data: dataText,
                                       gas: nil,
                                       gasPrice: nil,
-                                      value: valueText, 
+                                      value: valueText,
                                       nonce: nil,
                                       type: nil,
                                       accessList: nil,
@@ -321,7 +321,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
             assertionFailure("Incomplete WalletConnectV1Config")
             return nil
         }
-        
+
         if let key = try? CryptoUtils.randomKey().lowercased() {
             return WCURL(topic: UUID().uuidString.lowercased(), bridgeURL: bridgeUrl, key: key)
         } else {
@@ -336,7 +336,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
             assertionFailure("Incomplete WalletConnectV1Config")
             return
         }
-                
+
         let clientMeta = Session.ClientMeta(name: clientName,
                                             description: config?.clientDescription ?? "",
                                             icons: [iconUrl],
@@ -381,7 +381,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
             urlHandler.open(url, completionHandler: nil)
         }
     }
-    
+
     private func runCompletion(_ walletInfo: WalletInfo?, _ error: Error?) {
         connectionCompletion?(walletInfo, error)
         connectionCompletion = nil
@@ -404,7 +404,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
             Console.shared.log("eth_personalSign: Send")
             Console.shared.log(message)
             do {
-                try client.personal_sign(url: wc, message: message, account: account){ [weak self] response in
+                try client.personal_sign(url: wc, message: message, account: account) { [weak self] response in
                     self?.delay {
                         let string = try? response.result(as: String.self)
                         if let error = response.error {
@@ -460,7 +460,7 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
             // assertionFailure("Unable to eth_sendTransaction")
         }
     }
-    
+
     private func reallyAddChain(chain: EthereumAddChainRequest, completion: @escaping WalletOperationCompletion) {
         if let client = client, session != nil, let wc = wc {
             do {
@@ -562,7 +562,7 @@ extension WalletConnectV1Provider: ClientDelegate {
                         errorMessage = nil
                         code = nil
                     }
-                    
+
                     if let code = code {
                         HapticFeedback.shared?.notify(type: .error)
                         self.reset()

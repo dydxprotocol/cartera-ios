@@ -24,4 +24,3 @@ struct WalletError {
         return NSError(domain: "Cartera", code: code.rawValue, userInfo: userInfo)
     }
 }
-

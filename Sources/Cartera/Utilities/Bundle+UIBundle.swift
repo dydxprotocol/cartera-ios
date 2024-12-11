@@ -16,7 +16,7 @@ extension Bundle {
     var build: String? {
         return infoDictionary?["CFBundleVersion"] as? String
     }
-    
+
     var versionAndBuild: String? {
         if let version = version {
             if let build = build {
@@ -34,7 +34,7 @@ extension Bundle {
         }
         return nil
     }
-    
+
     func versionCompare(otherVersion: String) -> ComparisonResult {
         guard let version = version else {
             return .orderedAscending

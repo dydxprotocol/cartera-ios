@@ -25,14 +25,14 @@ public extension Wallet {
     var universal: String? {
         mobile?.universal
     }
-    
+
     var native: String? {
         if let scheme = mobile?.native {
             return "\(scheme)"
         }
         return nil
     }
-    
+
     var appLink: String? {
         app?.ios
     }
@@ -88,4 +88,3 @@ public struct WalletMetadata: Codable, Equatable, Hashable {
 public struct WalletColors: Codable, Equatable, Hashable {
     public let primary, secondary: String?
 }
-

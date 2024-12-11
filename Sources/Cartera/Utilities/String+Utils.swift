@@ -12,7 +12,7 @@ extension String {
     var isNotEmpty: Bool {
         !isEmpty
     }
-    
+
     func trim() -> String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed == "" ? nil : trimmed

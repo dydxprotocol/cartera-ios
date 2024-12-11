@@ -10,7 +10,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "Cartera",
-            targets: ["Cartera"]),
+            targets: ["Cartera"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -46,6 +46,6 @@ let package = Package(
             name: "CarteraTests",
             dependencies: [
                 "Cartera"
-            ]),
+            ])
     ]
 )
