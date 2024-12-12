@@ -158,9 +158,6 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                     if success {
                         self?.reallySignMessage(message: message, accountAddress: request.address, chainId: request.chainId) { [weak self] signed, error in
                             LocalAuthenticator.shared?.paused = false
-                            if error != nil {
-                                self?.disconnect()
-                            }
                             completion(signed, error)
                         }
                     } else {
@@ -187,9 +184,6 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                                          accountAddress: request.address,
                                          chainId: request.chainId) { [weak self] signed, error in
                             LocalAuthenticator.shared?.paused = false
-                            if error != nil {
-                                self?.disconnect()
-                            }
                             completion(signed, error)
                         }
                     } else {
@@ -226,9 +220,6 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                                          accountAddress: request.walletRequest.address,
                                          chainId: request.walletRequest.chainId) { [weak self] response, error in
                             LocalAuthenticator.shared?.paused = false
-                            if error != nil {
-                                self?.disconnect()
-                            }
                             completion(response, error)
                         }
                     } else {
