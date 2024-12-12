@@ -8,24 +8,24 @@
 
 import Foundation
 import CoinbaseWalletSDK
-import web3
+import Web3
 import BigInt
 
 final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
-    
+
     // MARK: WalletOperationProviderProtocol
 
     var walletStatus: WalletStatusProtocol? {
         _walletStatus
     }
     var walletStatusDelegate: WalletStatusDelegate?
-   
+
     // MARK: WalletUserConsentOperationProtocol
-    
+
     var userConsentDelegate: WalletUserConsentProtocol?
 
     // MARK: Private vars
-    
+
     private let cbwallet = CoinbaseWalletSDK.shared
     private var _walletStatus = WalletStatusImp() {
         didSet {
@@ -33,9 +33,9 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
         }
     }
     private var account: Account?
-   
+
     // MARK: WalletOperationProtocol
-    
+
     func connect(request: WalletRequest, completion: @escaping WalletConnectCompletion) {
         if _walletStatus.connectedWallet == nil || cbwallet.isConnected() == false {
             _walletStatus.state = .idle
@@ -59,7 +59,7 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
                             let errorTitle = "Network Mismatch"
                             let errorMessage = expectedChainId == 1 ?
                                 "Set your wallet network to 'Ethereum Mainnet'." :
-                                "set your wallet network to 'Goerli Test Network'"
+                                "set your wallet network to 'Sepolia Test Network'"
                             completion(nil, WalletError.error(code: .networkMismatch, title: errorTitle, message: errorMessage))
 
                         } else if let expectedEthereumAddress = expected.address, expectedEthereumAddress.lowercased() != account.address.lowercased() {
@@ -106,7 +106,7 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
             completion(nil, WalletError.error(code: .signingMessageFailed))
             return
         }
-        
+
         doSign(request: request, action: action, connected: connected, completion: completion)
     }
 
@@ -117,7 +117,7 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
             completion(nil, WalletError.error(code: .signingMessageFailed))
             return
         }
-        
+
         doSign(request: request, action: action, connected: connected, completion: completion)
     }
 
@@ -147,7 +147,6 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
             return
         }
 
-        
         LocalAuthenticator.shared?.paused = true
         connect(request: request.walletRequest) { [weak self] _, error in
             if let error = error {
@@ -165,7 +164,7 @@ final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         guard let action = Action(addChain: chain) else {
             assertionFailure("Unable to translate request to Ethereum transaction.")
@@ -224,7 +223,7 @@ private extension Action {
     init?(message: String) {
         self.init(jsonRpc: .personal_sign(address: "", message: message))
     }
-    
+
     init?(signTypedData typedDataProvider: WalletTypedDataProviderProtocol) {
         if let typedDataAsString = typedDataProvider.typedDataAsString,
            let typedDataJson = JSONString(rawValue: typedDataAsString) {
@@ -244,18 +243,13 @@ private extension Action {
             let chainId = transactionRequest.walletRequest.chainId
             let transaction = ethereum.transaction
 
-            let dataText = transaction.data?.web3.hexString ?? "0x"
-            let valueText = String(bigUInt: transaction.value) ?? "0"
-            let chainIdText: String
-            if let chainId = chainId {
-                chainIdText = "\(chainId)"
-            } else {
-                chainIdText = "1"
-            }
+            let dataText = transaction.data.hex()
+            let valueText = String(bigUInt: transaction.value?.quantity) ?? "0"
+            let chainIdText = "\(chainId)"
 
             self.init(jsonRpc: .eth_sendTransaction(
-                fromAddress: from.asString().uppercased(),
-                toAddress: ethereum.transaction.to.asString(),
+                fromAddress: from.hex(eip55: false).uppercased(),
+                toAddress: ethereum.transaction.to?.hex(eip55: false),
                 weiValue: valueText,
                 data: dataText,
                 nonce: nil,
@@ -269,7 +263,7 @@ private extension Action {
             return nil
         }
     }
-    
+
     init?(addChain chain: EthereumAddChainRequest) {
         let nativeCurrency: AddChainNativeCurrency?
         if let chainCurrency = chain.nativeCurrency {
@@ -283,7 +277,7 @@ private extension Action {
                                                            blockExplorerUrls: chain.blockExplorerUrls,
                                                            chainName: chain.chainName,
                                                            iconUrls: chain.iconUrls,
-                                                           nativeCurrency:  nativeCurrency,
+                                                           nativeCurrency: nativeCurrency,
                                                            rpcUrls: chain.rpcUrls ?? [])
         self.init(jsonRpc: jsonRpc)
     }

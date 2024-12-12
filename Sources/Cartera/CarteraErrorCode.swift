@@ -20,7 +20,7 @@ public enum CarteraErrorCode: Int {
     case invalidInput
     case addChainFailed
     case addChainNotSupported
-    
+
     var message: String {
         switch self {
         case .userCanceled:

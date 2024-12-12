@@ -9,11 +9,11 @@
 import Foundation
 import UIKit
 
-typealias ForegroundTask = ()->Void
+typealias ForegroundTask = () -> Void
 
 public final class CarteraAppState: NSObject, SingletonProtocol {
     static var shared: CarteraAppState = CarteraAppState()
-    
+
     @objc private(set) dynamic var background: Bool = false {
         didSet {
             didSetBackground(oldValue: oldValue)
@@ -22,7 +22,7 @@ public final class CarteraAppState: NSObject, SingletonProtocol {
 
     private var foregroundToken: NotificationToken?
     private var backgroundToken: NotificationToken?
-    
+
     private var foregroundTasks: [ForegroundTask] = []
 
     override public init() {
@@ -34,7 +34,7 @@ public final class CarteraAppState: NSObject, SingletonProtocol {
             self?.background = false
         })
     }
-    
+
     func runForegrounding(task: @escaping ForegroundTask) {
         if background {
             foregroundTasks.append(task)
@@ -42,7 +42,7 @@ public final class CarteraAppState: NSObject, SingletonProtocol {
             task()
         }
     }
-    
+
     private func didSetBackground(oldValue: Bool) {
         if background != oldValue {
             if !background {

@@ -8,9 +8,9 @@
 import BigInt
 import CryptoKit
 import WalletConnectSign
-import web3
 import UIKit
 import Combine
+import WalletConnectModal
 
 final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
@@ -31,7 +31,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             backgroundTaskId = .invalid
         }
     }
-    
+
     private var publishers = Set<AnyCancellable>()
     private var currentSession: Session?
     private var uri: WalletConnectURI? {
@@ -42,15 +42,15 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         }
     }
     private var requestingWallet: Wallet?
-    
+
     private var connectCompletions = [WalletConnectCompletion]()
     private var operationCompletions = [RPCID: WalletOperationCompletion]()
-    
+
     private var openUrlCompletions = [((Bool) -> Void)?]()
-    
+
     private var foregroundToken: NotificationToken?
     private var backgroundToken: NotificationToken?
-    
+
     private var background: Bool = false {
         didSet {
             if background == false {
@@ -61,26 +61,26 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-   
+
     private var _walletStatus = WalletStatusImp() {
         didSet {
             walletStatusDelegate?.statusChanged(_walletStatus)
         }
     }
-    
+
     var walletStatus: WalletStatusProtocol? {
         _walletStatus
     }
-    
+
     var walletStatusDelegate: WalletStatusDelegate?
-    
+
     var userConsentDelegate: WalletUserConsentProtocol?
-    
+
     override init() {
         super.init()
-        
+
         observeChanges()
-        
+
         backgroundToken = NotificationCenter.default.observe(notification: UIApplication.didEnterBackgroundNotification, do: { [weak self] _ in
             self?.background = true
         })
@@ -92,35 +92,46 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
     deinit {
         disconnect()
     }
-     
+
     func connect(request: WalletRequest, completion: @escaping WalletConnectCompletion) {
-        if let connectedWallet = _walletStatus.connectedWallet, request.wallet != nil, connectedWallet.wallet != request.wallet {
-            Task {
+        Task {
+            if let connectedWallet = _walletStatus.connectedWallet, connectedWallet.wallet != request.wallet {
                 await doDisconnectAsync()
             }
-        }
-        
-        if let wallet = _walletStatus.connectedWallet {
-            completion(wallet, nil)
-        } else {
-            requestingWallet = request.wallet
-            connectCompletions.append(completion)
-            
-            Task {
+
+            if let wallet = _walletStatus.connectedWallet {
+                DispatchQueue.main.async {
+                    completion(wallet, nil)
+                }
+            } else {
+                DispatchQueue.main.sync {
+                    requestingWallet = request.wallet
+                    connectCompletions.append(completion)
+
+                    if request.useModal {
+                        WalletConnectModal.present()
+                    }
+                }
+
                 do {
                     if self.uri == nil {
+                        let sessions = Sign.instance.getSessions()
+                        for session in sessions {
+                            try? await Sign.instance.disconnect(topic: session.topic)
+                        }
                         Console.shared.log("Creating WalletConnectV2 pair")
                         self.uri = try await Pair.instance.create()
                     }
                 } catch {
                     Console.shared.log(error)
+                    return
                 }
-                
+
+                self.uri = await doConnect(chainId: request.chainId, methods: request.wallet?.config?.methods)
+
                 DispatchQueue.main.async { [weak self] in
                     self?.executeWithDeeplink(request: request) { success in
-                        if success, let uri = self?.uri {
-                            self?.doConnect(uri: uri, chainId: request.chainId, methods: request.wallet?.config?.methods)
-                        } else {
+                        if !success {
                             completion(nil, WalletError.error(code: .linkOpenFailed))
                         }
                     }
@@ -134,7 +145,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             await doDisconnectAsync()
         }
     }
-    
+
     func signMessage(request: WalletRequest, message: String, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         LocalAuthenticator.shared?.paused = true
         connect(request: request) { [weak self] _, error in
@@ -145,7 +156,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 connected?(wallet)
                 self?.executeWithDeeplink(request: request) { success in
                     if success {
-                        self?.reallySignMessage(message: message) { [weak self] signed, error in
+                        self?.reallySignMessage(message: message, accountAddress: request.address, chainId: request.chainId) { [weak self] signed, error in
                             LocalAuthenticator.shared?.paused = false
                             if error != nil {
                                 self?.disconnect()
@@ -161,7 +172,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     func sign(request: WalletRequest, typedDataProvider: WalletTypedDataProviderProtocol?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         LocalAuthenticator.shared?.paused = true
         connect(request: request) { [weak self] _, error in
@@ -172,7 +183,9 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 connected?(wallet)
                 self?.executeWithDeeplink(request: request) { success in
                     if success {
-                        self?.reallySign(typedDataProvider: typedDataProvider) { [weak self] signed, error in
+                        self?.reallySign(typedDataProvider: typedDataProvider,
+                                         accountAddress: request.address,
+                                         chainId: request.chainId) { [weak self] signed, error in
                             LocalAuthenticator.shared?.paused = false
                             if error != nil {
                                 self?.disconnect()
@@ -188,7 +201,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     func send(request: WalletTransactionRequest, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         guard let ethereumTransactionRequest = request.ethereum else {
             assertionFailure("Unexpected transaction type.")
@@ -209,7 +222,9 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 connected?(wallet)
                 self?.executeWithDeeplink(request: request.walletRequest) { success in
                     if success {
-                        self?.reallySend(transaction: transaction) { [weak self] response, error in
+                        self?.reallySend(transaction: transaction,
+                                         accountAddress: request.walletRequest.address,
+                                         chainId: request.walletRequest.chainId) { [weak self] response, error in
                             LocalAuthenticator.shared?.paused = false
                             if error != nil {
                                 self?.disconnect()
@@ -220,18 +235,18 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                         completion(nil, WalletError.error(code: .linkOpenFailed))
                     }
                 }
-            }  else {
+            } else {
                 assertionFailure("wallet not found")
             }
         }
     }
-    
+
     func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval? = nil, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
         guard request.wallet?.config?.methods?.contains("wallet_addEthereumChain") ?? false else {
             completion(nil, WalletError.error(code: .addChainNotSupported))
             return
         }
-        
+
         connect(request: request) { [weak self] _, error in
             if let error = error {
                 LocalAuthenticator.shared?.paused = false
@@ -254,29 +269,32 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     private func executeWithDeeplink(request: WalletRequest, block: @escaping ((Bool) -> Void)) {
-        if request.wallet != nil {
-            openLaunchDeeplink() { success in
-                block(success)
+        if request.wallet != nil || request.useModal {
+            openLaunchDeeplink { success in
+                if request.useModal {
+                    block(true)     // WC Modal will open the applinkk, so no need to show error
+                } else {
+                    block(success)
+                }
             }
         } else {
             block(true)
         }
     }
-    
-    private func doConnect(uri: WalletConnectURI, chainId: Int?, methods: [String]?) {
+
+    private func doConnect(chainId: Int?, methods: [String]?) async -> WalletConnectURI? {
         Console.shared.log("[PROPOSER] Connecting to a pairing...")
         let chainId = chainId ?? 1
         let chains: Set<Blockchain> = Set([ Blockchain("eip155:\(chainId)")! ])
         let namespaces: [String: ProposalNamespace] = [
             "eip155": ProposalNamespace(
-                chains: chains,
+                chains: Array(chains),
                 methods: Set(methods ?? [
                     "eth_sendTransaction",
                     "personal_sign",
-                    "eth_signTypedData",
-                    "wallet_addEthereumChain"
+                    "eth_signTypedData"
                 ]),
                 events: [
                 ]
@@ -286,17 +304,21 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         let sessionProperties: [String: String] = [
             "caip154-mandatory": "true"
         ]
-        
-        Task {
-            try await Sign.instance.connect(
+
+        do {
+            let ret = try await Sign.instance.connect(
                 requiredNamespaces: namespaces,
                 optionalNamespaces: optionalNamespaces,
-                sessionProperties: sessionProperties,
-                topic: uri.topic
+                sessionProperties: sessionProperties
             )
+            return ret
+        } catch {
+            Console.shared.log(error)
+            return nil
         }
+
     }
-    
+
     private func doDisconnectAsync() async {
         if let session = currentSession {
             do {
@@ -309,7 +331,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     private func resetStates() {
         currentSession = nil
         uri = nil
@@ -320,22 +342,32 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         operationCompletions = [:]
         openUrlCompletions = []
     }
-    
-    private func reallySignMessage(message: String, completion: @escaping WalletOperationCompletion) {
-        guard let session = currentSession,
-              let account = session.namespaces.first?.value.accounts.first?.address,
-              let chainId = session.namespaces.first?.value.accounts.first?.blockchain else {
-            completion(nil, WalletError.error(code: .invalidSession))
+
+    private func reallySignMessage(message: String,
+                                   accountAddress: String?,
+                                   chainId: Int,
+                                   completion: @escaping WalletOperationCompletion) {
+        let accountAddress = accountAddress ?? currentSession?.accounts.first?.address
+        let account = currentSession?.accounts.first { account in
+            account.address.lowercased() == accountAddress?.lowercased() && account.blockchain.reference == "\(chainId)"
+        }
+
+        guard let session = currentSession, let account = account else {
+                  completion(nil, WalletError.error(code: .invalidSession))
+                  return
+              }
+
+        let payload = AnyCodable([message, account.address])
+        guard let request = try? Request(topic: session.topic, method: "personal_sign", params: payload, chainId: account.blockchain) else {
+            completion(nil, WalletError.error(code: .invalidInput))
             return
         }
-        
-        let payload = AnyCodable([message, account])
-        let request = Request(topic: session.topic, method: "personal_sign", params: payload, chainId: chainId)
+
         operationCompletions[request.id] = completion
         Task {
             do {
                 try await Sign.instance.request(params: request)
-                
+
             } catch {
                 Console.shared.log(error)
                 DispatchQueue.main.async { [weak self] in
@@ -345,26 +377,37 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
-    private func reallySign(typedDataProvider: WalletTypedDataProviderProtocol?, completion: @escaping WalletOperationCompletion) {
-        guard let session = currentSession,
-              let account = session.namespaces.first?.value.accounts.first?.address,
-              let chainId =  session.namespaces.first?.value.accounts.first?.blockchain else {
-            completion(nil, WalletError.error(code: .invalidSession))
-            return
+
+    private func reallySign(typedDataProvider: WalletTypedDataProviderProtocol?,
+                            accountAddress: String?,
+                            chainId: Int,
+                            completion: @escaping WalletOperationCompletion) {
+        let accountAddress = accountAddress ?? currentSession?.accounts.first?.address
+        let account = currentSession?.accounts.first { account in
+            account.address.lowercased() == accountAddress?.lowercased() && account.blockchain.reference == "\(chainId)"
         }
+
+        guard let session = currentSession, let account = account else {
+                  completion(nil, WalletError.error(code: .invalidSession))
+                  return
+              }
+
         guard let typeDataString = typedDataProvider?.typedDataAsString else {
             completion(nil, WalletError.error(code: .invalidInput, message: "invalid typedData"))
             return
         }
-        
-        let payload = AnyCodable([account, typeDataString])
-        let request = Request(topic: session.topic, method: "eth_signTypedData", params: payload, chainId: chainId)
+
+        let payload = AnyCodable([account.address, typeDataString])
+        guard let request = try? Request(topic: session.topic, method: "eth_signTypedData", params: payload, chainId: account.blockchain) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+
         operationCompletions[request.id] = completion
         Task {
             do {
                 try await Sign.instance.request(params: request)
-                
+
             } catch {
                 Console.shared.log(error)
                 DispatchQueue.main.async { [weak self] in
@@ -374,16 +417,28 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
-    private func reallySend(transaction: Transaction, completion: @escaping WalletOperationCompletion) {
+
+    private func reallySend(transaction: Transaction,
+                            accountAddress: String?,
+                            chainId: Int,
+                            completion: @escaping WalletOperationCompletion) {
+        let accountAddress = accountAddress ?? currentSession?.accounts.first?.address
+        let account = currentSession?.accounts.first { account in
+            account.address.lowercased() == accountAddress?.lowercased() && account.blockchain.reference == "\(chainId)"
+        }
+
         guard let session = currentSession,
-              let chainId =  session.namespaces.first?.value.accounts.first?.blockchain else {
+              let chainId = account?.blockchain else {
             completion(nil, WalletError.error(code: .invalidSession))
             return
         }
-     
+
         let payload = AnyCodable([transaction])
-        let request = Request(topic: session.topic, method: "eth_sendTransaction", params: payload, chainId: chainId)
+        guard let request = try? Request(topic: session.topic, method: "eth_sendTransaction", params: payload, chainId: chainId) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+
         operationCompletions[request.id] = completion
         Task {
             do {
@@ -397,21 +452,25 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         }
     }
-    
+
     private func reallyAddChain(chain: EthereumAddChainRequest, timeOut: TimeInterval? = nil, completion: @escaping WalletOperationCompletion) {
         guard let session = currentSession,
               let chainId =  session.namespaces.first?.value.accounts.first?.blockchain else {
             completion(nil, WalletError.error(code: .invalidSession))
             return
         }
-     
+
         let payload = AnyCodable([chain])
-        let request = Request(topic: session.topic, method: "wallet_addEthereumChain", params: payload, chainId: chainId)
+        guard let request = try? Request(topic: session.topic, method: "wallet_addEthereumChain", params: payload, chainId: chainId) else {
+            completion(nil, WalletError.error(code: .invalidInput))
+            return
+        }
+
         operationCompletions[request.id] = completion
         Task {
             do {
                 try await Sign.instance.request(params: request)
-                
+
                 if let timeOut = timeOut {
                     DispatchQueue.main.asyncAfter(deadline: .now() + timeOut) { [weak self] in
                         if let completion = self?.operationCompletions[request.id] {
@@ -432,11 +491,17 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
 
     private func openLaunchDeeplink(completion: ((Bool) -> Void)? = nil) {
         if background == false {
-            if let wallet = _walletStatus.connectedWallet?.wallet ?? requestingWallet,
-               let deeplink = uri?.absoluteString,
-               let url = WalletConnectUtils.createUrl(wallet: wallet, deeplink: deeplink, type: .walletConnectV2),
+            let urlString = currentSession?.peer.redirect?.native ?? currentSession?.peer.redirect?.universal
+            if let urlString = urlString, let url = URL(string: urlString),
                let urlHandler = URLHandler.shared,
                urlHandler.canOpenURL(url) {
+                beginBackgroundTask()
+                urlHandler.open(url, completionHandler: completion)
+            } else if let wallet = _walletStatus.connectedWallet?.wallet ?? requestingWallet,
+                      let deeplink = uri?.absoluteString,
+                      let url = WalletConnectUtils.createUrl(wallet: wallet, deeplink: deeplink, type: .walletConnectV2),
+                      let urlHandler = URLHandler.shared,
+                      urlHandler.canOpenURL(url) {
                 beginBackgroundTask()
                 urlHandler.open(url, completionHandler: completion)
             } else {
@@ -444,10 +509,10 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             }
         } else {
             completion?(true)
-          //  openUrlCompletions.append(completion)
+            //  openUrlCompletions.append(completion)
         }
     }
-    
+
     private func observeChanges() {
         Sign.instance.socketConnectionStatusPublisher
             .receive(on: DispatchQueue.main)
@@ -455,7 +520,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 Console.shared.log("WalletConnectV2 socketConnectionStatus: \(status)")
             }
             .store(in: &publishers)
-        
+
         Sign.instance.sessionDeletePublisher
             .receive(on: DispatchQueue.main)
             .sink { (string, reason) in
@@ -467,7 +532,7 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] response in
                 Console.shared.log("WalletConnectV2 sessionResponse: \(response)")
-                     
+
                 if let completion = self?.operationCompletions[response.id] {
                     self?.operationCompletions.removeValue(forKey: response.id)
                     switch response.result {
@@ -494,14 +559,28 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
                 self?._walletStatus.state = .connectedToWallet
             }
             .store(in: &publishers)
-        
+
         Sign.instance.sessionRejectionPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] (proposal: Session.Proposal, reason: Reason) in
+            .sink { [weak self] (_: Session.Proposal, reason: Reason) in
                 Console.shared.log("WalletConnectV2 sessionRejectionPublisher: \(reason)")
                 self?.connectCompletions.forEach { completion in
                     completion(nil, WalletError.error(code: .refusedByWallet, message: reason.message))
                 }
+            }
+            .store(in: &publishers)
+
+        Sign.instance.sessionEventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { (_: Session.Event, sessionTopic: String, _: Blockchain?) in
+                Console.shared.log("WalletConnectV2 sessionEventPublisher: \(sessionTopic)")
+            }
+            .store(in: &publishers)
+
+        Sign.instance.sessionsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { sessions in
+                Console.shared.log("WalletConnectV2 sessionsPublisher: \(sessions.count)")
             }
             .store(in: &publishers)
     }
@@ -525,26 +604,23 @@ extension WalletInfo {
          } else {
              imageUrl = nil
          }
-         self.init(address: address, chainId: chainId, wallet: wallet, peerName: name, peerImageUrl: imageUrl)
+        self.init(address: address, chainId: chainId, wallet: wallet, peerName: name, peerImageUrl: imageUrl)
      }
 }
 
 struct Transaction: Codable {
     let from, to, data: String
-    
+
     init?(ethereumTransactionRequest: EthereumTransactionRequest) {
         let transaction = ethereumTransactionRequest.transaction
-        
-        if let from = transaction.from {
-            let maxPriorityFeePerGas: BigUInt?
-            let maxFeePerGas: BigUInt?
 
-            let dataText = transaction.data?.web3.hexString
-            let valueText = transaction.value?.web3.hexString
+        if let from = transaction.from, let to = transaction.to {
 
-            self.from = from.asString()
-            self.to = transaction.to.asString()
-            self.data =  dataText ?? "0x"
+            let dataText = transaction.data.hex()
+
+            self.from = from.hex(eip55: false)
+            self.to = to.hex(eip55: false)
+            self.data =  dataText
         } else {
             return nil
         }

@@ -15,7 +15,7 @@ final public class SimpleWalletUserConsent: WalletUserConsentProtocol {
     public func showTransactionConsent(request: WalletTransactionRequest, completion: WalletUserConsentCompletion?) {
         let valueString: String
         if let value = request.ethereum?.transaction.value {
-            let valueDouble = (Double(String(value)) ?? 0.0) / 1_000_000_000 / 1_000_000_000
+            let valueDouble = (Double(value.quantity)) / 1_000_000_000 / 1_000_000_000
             valueString = "\(valueDouble) ETH"
         } else {
             valueString = ""

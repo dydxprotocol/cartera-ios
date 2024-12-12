@@ -14,7 +14,7 @@ final class CarteraResources {
             Bundle.main.resourceURL,
 
             // Bundle should be present here when the package is linked into a framework.
-            Bundle(for: CarteraResources.self).resourceURL,
+            Bundle(for: CarteraResources.self).resourceURL
         ]
 
         let bundleName = "Cartera_Cartera"

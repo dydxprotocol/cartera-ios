@@ -7,18 +7,20 @@
 //
 
 import Foundation
-import web3
+import Web3
 import BigInt
 
-public struct WalletRequest: Equatable {
+public struct WalletRequest: Equatable, Hashable {
     public let wallet: Wallet?
     public let address: String?
-    public let chainId: Int?
+    public let chainId: Int
+    public let useModal: Bool
 
-    public init(wallet: Wallet?, address: String?, chainId: Int?) {
+    public init(wallet: Wallet?, address: String?, chainId: Int, useModal: Bool) {
         self.wallet = wallet
         self.address = address
         self.chainId = chainId
+        self.useModal = useModal
     }
 }
 
@@ -26,7 +28,7 @@ public struct WalletTransactionRequest {
     public let walletRequest: WalletRequest
     // Union of transaction request types
     public let ethereum: EthereumTransactionRequest?
-   
+
     public init(walletRequest: WalletRequest, ethereum: EthereumTransactionRequest?) {
         self.walletRequest = walletRequest
         self.ethereum = ethereum
@@ -35,8 +37,7 @@ public struct WalletTransactionRequest {
 
 public struct EthereumTransactionRequest {
     public let transaction: EthereumTransaction
-    
-    
+
     public init(transaction: EthereumTransaction) {
         self.transaction = transaction
     }
@@ -55,7 +56,7 @@ public struct EthereumAddChainRequest: Codable {
     public let iconUrls: [String]?
     public let nativeCurrency: NativeCurrency?
     public let blockExplorerUrls: [String]?
-    
+
     public init(chainId: String, chainName: String? = nil, rpcUrls: [String]? = nil, iconUrls: [String]? = nil, nativeCurrency: EthereumAddChainRequest.NativeCurrency? = nil, blockExplorerUrls: [String]? = nil) {
         self.chainId = chainId
         self.chainName = chainName
