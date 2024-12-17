@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SDWebImage/SDWebImage",
       "state" : {
-        "revision" : "936f1c7067728d16c362ba4fb93c17df78b5fd79",
-        "version" : "5.18.2"
+        "revision" : "10d06f6a33bafae8c164fbfd1f03391f6d4692b3",
+        "version" : "5.20.0"
       }
     },
     {
@@ -111,10 +111,10 @@
     {
       "identity" : "walletconnectswiftv2",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/WalletConnect/WalletConnectSwiftV2.git",
+      "location" : "https://github.com/dydxprotocol/WalletConnectSwiftV2.git",
       "state" : {
-        "revision" : "3327c0a8c014b155534b91520554d812e2960077",
-        "version" : "1.20.3"
+        "branch" : "develop",
+        "revision" : "0b269efb6aa088042edf9e64d3c7f4a03a45a778"
       }
     },
     {
