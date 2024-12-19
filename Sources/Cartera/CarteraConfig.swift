@@ -98,6 +98,26 @@ public struct CarteraConfig: SingletonProtocol {
         _wallets ?? []
     }
 
+    public var wcModalWallets = [
+        "c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",     // Metamask
+        "4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0",     // Trust
+        "971e689d0a5be527bac79629b4ee9b925e82208e5168b733496a09c0faed0709",     // OKX
+        "c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a",     // Uniswap
+        "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369",     // Rainbow
+        "ecc4036f814562b41a5268adc86270fba1365471402006302e70169465b7ac18",     // Zerion
+        "c286eebc742a537cd1d6818363e9dc53b21759a1e8e5d9b263d0c03ec7703576",     // 1inch
+        "ef333840daf915aafdc4a004525502d6d49d77bd9c65e0642dbaefb3c2893bef",     // imToken
+        "38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662",     // Bitget
+        "0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150",     // Safepal
+        "15c8b91ade1a4e58f3ce4e7a0dd7f42b47db0c8df7e0d84f63eb39bcb96c4e0f",     // Bybit
+        "19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927",     // Ledger Live
+        "344d0e58b139eb1b6da0c29ea71d52a8eace8b57897c6098cb9b46012665c193",     // Timeless X
+        "225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f",     // Safe
+        "f2436c67184f158d1beda5df53298ee84abfc367581e4505134b5bcf5f46697d",     // Crypto.com
+        "18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277",     // Kraken
+        "541d5dcd4ede02f3afaf75bf8e3e4c4f1fb09edb5fa6c4377ebf31c2785d9adf"      // Ronin
+    ]
+    
     public init(localAuthenticator: LocalAuthenticatorProtocol = TimedLocalAuthenticator(),
                 walletProvidersConfig: WalletProvidersConfig = WalletProvidersConfig()) {
         self.walletProvidersConfig = walletProvidersConfig
@@ -153,7 +173,10 @@ public struct CarteraConfig: SingletonProtocol {
 
             WalletConnectModal.configure(
                 projectId: walletConnectV2Config.projectId,
-                metadata: metadata
+                metadata: metadata,
+                recommendedWalletIds: wcModalWallets,
+                excludedWalletIds: [
+                ]
             )
         }
     }
