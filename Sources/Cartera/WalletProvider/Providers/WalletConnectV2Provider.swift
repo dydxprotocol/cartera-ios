@@ -601,6 +601,7 @@ extension WalletInfo {
 
 struct Transaction: Codable {
     let from, to, data: String
+    let value: String?
 
     init?(ethereumTransactionRequest: EthereumTransactionRequest) {
         let transaction = ethereumTransactionRequest.transaction
@@ -612,6 +613,7 @@ struct Transaction: Codable {
             self.from = from.hex(eip55: false)
             self.to = to.hex(eip55: false)
             self.data =  dataText
+            self.value = transaction.value?.hex()
         } else {
             return nil
         }
