@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Cartera'
-  s.version          = '0.1.7'
+  s.version          = '0.1.8'
   s.summary          = 'Web3 mobile wallet connection library for iOS'
   s.homepage         = 'https://github.com/dydxprotocol/cartera-ios'
   s.license          = { :type => 'MIT', :file => 'LICENSE.md' }

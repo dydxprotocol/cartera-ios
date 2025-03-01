@@ -244,7 +244,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let transaction: EthereumTransaction
             do {
                 transaction = try EthereumTransaction(from: EthereumAddress(hex: address, eip55: false),
-                                                      to: EthereumAddress(hex: "0x0000000000000000000000000000000000000000", eip55: false)
+                                                      to: EthereumAddress(hex: "0x0000000000000000000000000000000000000000", eip55: false),
+                                                      value: EthereumQuantity(quantity: BigUInt( "1000000000000000"))
                 )
             } catch {
                 showError(error: error)
