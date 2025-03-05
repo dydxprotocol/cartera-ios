@@ -9,6 +9,7 @@ import Foundation
 import TweetNacl
 import Base58Swift
 import UIKit
+import SolanaSwift
 
 final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
     
@@ -17,6 +18,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
         case onDisconnect
         case onSignMessage
         case onSignTransaction
+        case onSendTransaction
         
         var request: String {
             switch self {
@@ -28,6 +30,8 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
                 return "signMessage"
             case .onSignTransaction:
                 return "signTransaction"
+            case .onSendTransaction:
+                return "signAndSendTransaction"
             }
         }
     }
@@ -136,9 +140,12 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
                     if let response = try? JSONDecoder().decode(ConnectResponse.self,  from: data) {
                         session = response.session
                         
-                        _walletStatus.connectedWallet = WalletInfo(address: "Phantom", chainId: nil, wallet: connectionWallet)
+                        let walletInfo = WalletInfo(address: "Phantom", chainId: nil, wallet: connectionWallet)
                         _walletStatus.state = .connectedToWallet
-                        completion(_walletStatus.connectedWallet, nil)
+                        _walletStatus.connectedWallet = walletInfo
+                        DispatchQueue.main.async {
+                            completion(walletInfo, nil)
+                        }
 //
 //                        if let sessionData = decodeSignedPayload(payload: response.session),
 //                           let sessionStruct = try? JSONDecoder().decode(PhantomSession.self, from: sessionData) {
@@ -177,7 +184,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             } else {
                 let nonce = url.queryParams["nonce"]
                 if let data = decryptPayload(payload: url.queryParams["data"], nonce: nonce) {
-                    if let response = try? JSONDecoder().decode(SignMessageResponse.self,  from: data) {
+                    if let response = try? JSONDecoder().decode(SignMessageResponse.self, from: data) {
                         completion(response.signature, nil)
                     } else {
                         completion(nil, WalletError.error(code: .unexpectedResponse, message: "Unexpected JSON payload"))
@@ -189,11 +196,55 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             return true
             
         case .onSignTransaction:
+            guard let completion = operationCompletion else {
+                return false
+            }
+            operationCompletion = nil
             
+            let errorCode = url.queryParams["errorCode"]
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            if let errorCode = errorCode {
+                let code = Int(errorCode) ?? -1
+                completion(nil, WalletError.error(code: .unexpectedResponse, message: errorMessage + " (\(code))"))
+            } else {
+                let nonce = url.queryParams["nonce"]
+                if let data = decryptPayload(payload: url.queryParams["data"], nonce: nonce) {
+                    if let response = try? JSONDecoder().decode(SignTransactionResponse.self,  from: data) {
+                        completion(response.transaction, nil)
+                    } else {
+                        completion(nil, WalletError.error(code: .unexpectedResponse, message: "Unexpected JSON payload"))
+                    }
+                } else {
+                    completion(nil, WalletError.error(code: .unexpectedResponse, message: "Unable to decrypt payload"))
+                }
+            }
+            return true
+            
+        case .onSendTransaction:
+            guard let completion = operationCompletion else {
+                return false
+            }
+            operationCompletion = nil
+            
+            let errorCode = url.queryParams["errorCode"]
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            if let errorCode = errorCode {
+                let code = Int(errorCode) ?? -1
+                completion(nil, WalletError.error(code: .unexpectedResponse, message: errorMessage + " (\(code))"))
+            } else {
+                let nonce = url.queryParams["nonce"]
+                if let data = decryptPayload(payload: url.queryParams["data"], nonce: nonce) {
+                    if let response = try? JSONDecoder().decode(SendTransactionResponse.self,  from: data) {
+                        completion(response.signature, nil)
+                    } else {
+                        completion(nil, WalletError.error(code: .unexpectedResponse, message: "Unexpected JSON payload"))
+                    }
+                } else {
+                    completion(nil, WalletError.error(code: .unexpectedResponse, message: "Unable to decrypt payload"))
+                }
+            }
             return true
         }
-        
-        return false
     }
 
     // MARK: WalletOperationProviderProtocol
@@ -211,8 +262,9 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
     // MARK: WalletOperationProtocol
 
     func connect(request: WalletRequest, completion: @escaping WalletConnectCompletion) {
+        let connectedWallet = _walletStatus.connectedWallet
         guard session == nil else {
-            completion(_walletStatus.connectedWallet, nil)
+            completion(connectedWallet, nil)
             return
         }
         
@@ -271,15 +323,19 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
     }
     
     func disconnect() {
-        if let request = try? DisconnectRequest(session: session).json(),
-           let url = createRequestUrl(request: request, action: .onDisconnect)  {
-            openLaunchDeeplink(url: url) { success in
-                if !success {
-                    assertionFailure("Failed to open URL")
-                }
-            }
-        }
-        
+//        guard let session = session else {
+//            return
+//        }
+//        
+//        if let request = try? DisconnectRequest(session: session).json(),
+//           let url = createRequestUrl(request: request, action: .onDisconnect)  {
+//            openLaunchDeeplink(url: url) { success in
+//                if !success {
+//                    Console.shared.log("Failed to open URL")
+//                }
+//            }
+//        }
+//        
         publicKey = nil
         privateKey = nil
         phantomPublicKey = nil
@@ -322,27 +378,35 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
     }
     
     func sign(request: WalletRequest, typedDataProvider: (any WalletTypedDataProviderProtocol)?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
-        connect(request: request) { [weak self] walletInfo, error in
+        guard let typeDataString = typedDataProvider?.typedDataAsString else {
+            completion(nil, WalletError.error(code: .invalidInput, message: "invalid typedData"))
+            return
+        }
+        signMessage(request: request, message: typeDataString, connected: connected, completion: completion)
+    }
+    
+    func send(request: WalletTransactionRequest, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
+        connect(request: request.walletRequest) { [weak self] walletInfo, error in
             if let error = error {
                 LocalAuthenticator.shared?.paused = false
                 completion(nil, error)
             } else {
                 connected?(walletInfo)
-                self?.doSign(typedDataProvider: typedDataProvider, completion: completion)
+                self?.doSend(request: request, completion: completion)
             }
         }
     }
     
-    private func doSign(typedDataProvider: (any WalletTypedDataProviderProtocol)?, completion: @escaping WalletOperationCompletion) {
-        guard let typeDataString = typedDataProvider?.typedDataAsString else {
-            completion(nil, WalletError.error(code: .invalidInput, message: "invalid typedData"))
+    private func doSend(request: WalletTransactionRequest, completion: @escaping WalletOperationCompletion) {
+        guard let data = request.solana else {
+            completion(nil, WalletError.error(code: .invalidInput, message: "Solana data not found"))
             return
         }
-        
-        let request = SignTransactionRequest(session: session,
-                                             transaction: base58Encode(data: typeDataString.data(using: .utf8)))
+     
+        let request = SendTransactionRequest(session: session,
+                                             transaction: base58Encode(data: data))
         if  let request = try? request.json(),
-            let url = createRequestUrl(request: request, action: .onSignTransaction) {
+            let url = createRequestUrl(request: request, action: .onSendTransaction) {
             openLaunchDeeplink(url: url) { [weak self] success in
                 if !success {
                     assertionFailure("Failed to open URL")
@@ -351,10 +415,6 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
                 self?.operationCompletion = completion
             }
         }
-    }
-    
-    func send(request: WalletTransactionRequest, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
-        
     }
     
     func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion) {
@@ -506,6 +566,15 @@ private struct SignTransactionRequest: Codable {
 
 private struct SignTransactionResponse: Codable {
     let transaction: String?
+}
+
+private struct SendTransactionRequest: Codable {
+    let session: String?
+    let transaction: String?
+}
+
+private struct SendTransactionResponse: Codable {
+    let signature: String?
 }
 
 private struct PhantomSession: Codable {

@@ -28,10 +28,12 @@ public struct WalletTransactionRequest {
     public let walletRequest: WalletRequest
     // Union of transaction request types
     public let ethereum: EthereumTransactionRequest?
+    public let solana: Data?
 
-    public init(walletRequest: WalletRequest, ethereum: EthereumTransactionRequest?) {
+    public init(walletRequest: WalletRequest, ethereum: EthereumTransactionRequest?, solana: Data? = nil) {
         self.walletRequest = walletRequest
         self.ethereum = ethereum
+        self.solana = solana
     }
 }
 

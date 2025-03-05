@@ -23,7 +23,8 @@ let package = Package(
         .package(url: "https://github.com/WalletConnect/HDWallet", branch: "develop"),
         .package(url: "https://github.com/bitmark-inc/tweetnacl-swiftwrap.git", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/heckj/Base58Swift.git", .upToNextMajor(from: "2.1.0")),
-        .package(url: "https://github.com/WalletConnect/Web3.swift", exact: "1.0.2")
+        .package(url: "https://github.com/WalletConnect/Web3.swift", exact: "1.0.2"),
+        .package(url: "https://github.com/p2p-org/solana-swift", from: "5.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -40,7 +41,8 @@ let package = Package(
                 .product(name: "HDWalletKit", package: "HDWallet"),
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "TweetNacl", package: "tweetnacl-swiftwrap"),
-                "Base58Swift"
+                "Base58Swift",
+                .product(name: "SolanaSwift", package: "solana-swift")
             ],
             resources: [
                 .process("Resources")
