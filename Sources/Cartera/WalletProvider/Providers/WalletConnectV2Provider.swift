@@ -93,6 +93,10 @@ final class WalletConnectV2Provider: NSObject, WalletOperationProviderProtocol {
         disconnect()
     }
 
+    func handleResponse(_ url: URL) -> Bool {
+        false
+    }
+    
     func connect(request: WalletRequest, completion: @escaping WalletConnectCompletion) {
         Task {
             if let connectedWallet = _walletStatus.connectedWallet, connectedWallet.wallet != request.wallet {

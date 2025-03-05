@@ -119,6 +119,10 @@ final class WalletConnectV1Provider: NSObject, WalletOperationProviderProtocol {
         reset()
     }
 
+    func handleResponse(_ url: URL) -> Bool {
+        false
+    }
+    
     // MARK: WalletStatusProtocol
 
     var walletStatus: WalletStatusProtocol? {

@@ -80,11 +80,15 @@ public protocol WalletOperationProtocol {
     func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion)
 }
 
+public protocol WalletDeeplinkHandlingProtocol {
+    func handleResponse(_ url: URL) -> Bool
+}
+
 public protocol WalletUserConsentOperationProtocol: WalletOperationProtocol {
     var userConsentDelegate: WalletUserConsentProtocol? { get set }
 }
 
-public protocol WalletOperationProviderProtocol: WalletStatusProviding, WalletUserConsentOperationProtocol, NSObjectProtocol {}
+public protocol WalletOperationProviderProtocol: WalletStatusProviding, WalletUserConsentOperationProtocol, WalletDeeplinkHandlingProtocol, NSObjectProtocol {}
 
 public extension WalletOperationProtocol {
     func logObject<T: Encodable>(label: String = "", _ object: T, function: String = #function) {

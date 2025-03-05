@@ -9,7 +9,9 @@ import Foundation
 
 public extension WalletConnections {
     var installed: Bool {
-        if let native = native, let url = URL(string: native), let urlHandler = URLHandler.shared {
+        if let native = native,
+           let url = URL(string: native),
+           let urlHandler = URLHandler.shared {
             return urlHandler.canOpenURL(url)
         }
         return false

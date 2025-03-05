@@ -47,10 +47,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                           redirectNative: "dydxV4",
                                                           redirectUniversal: "https://trade.dydx.exchange/",
                                                           appGroupIdentifier: "group.cartera.example")
-        let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://trade.stage.dydx.exchange/walletsegueCarteraExample")
+        let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://v4-web-internal.vercel.app/walletsegueCarteraExample")
+        let phantomWalletConfig = PhantomWalletConfig(appUrl: "https://v4.testnet.dydx.exchange/",
+                                                      appRedirectBaseUrl: "https://v4-web-internal.vercel.app/phantomCarteraExample")
         return  WalletProvidersConfig(walletConnectV1: walletConnectV1Config,
                                       walletConnectV2: walletConnectV2Config,
-                                      walletSegue: walletSegueConfig)
+                                      walletSegue: walletSegueConfig,
+                                      phantomWallet: phantomWalletConfig)
     }()
 
     override func viewDidLoad() {

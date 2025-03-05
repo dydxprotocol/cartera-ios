@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Cartera",
-    platforms: [.iOS(.v13)],
+    platforms: [.iOS(.v16)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -21,6 +21,8 @@ let package = Package(
         .package(url: "https://github.com/daltoniam/Starscream.git", branch: "3.1.2"),
         .package(url: "https://github.com/coinbase/wallet-mobile-sdk", branch: "1.0.5"),
         .package(url: "https://github.com/WalletConnect/HDWallet", branch: "develop"),
+        .package(url: "https://github.com/bitmark-inc/tweetnacl-swiftwrap.git", .upToNextMajor(from: "1.1.0")),
+        .package(url: "https://github.com/heckj/Base58Swift.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/WalletConnect/Web3.swift", exact: "1.0.2")
     ],
     targets: [
@@ -36,7 +38,9 @@ let package = Package(
                 .product(name: "WalletConnectModal", package: "WalletConnectSwiftV2"),
                 "Starscream",
                 .product(name: "HDWalletKit", package: "HDWallet"),
-                .product(name: "Web3", package: "Web3.swift")
+                .product(name: "Web3", package: "Web3.swift"),
+                .product(name: "TweetNacl", package: "tweetnacl-swiftwrap"),
+                "Base58Swift"
             ],
             resources: [
                 .process("Resources")

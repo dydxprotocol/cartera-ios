@@ -55,6 +55,60 @@
     }
   },
   {
+    "id": "phantom-wallet",
+    "name": "Phantom Wallet",
+    "description": "",
+    "homepage": "https://phantom.com/",
+    "chains": [
+      "eip155:1"
+    ],
+    "versions": [
+      "1"
+    ],
+    "app": {
+      "browser": "",
+      "ios": "https://apps.apple.com/us/app/coinbase-wallet-nfts-crypto/id1278383455",
+      "android": "https://play.google.com/store/apps/details?id=org.toshi",
+      "mac": "",
+      "windows": "",
+      "linux": ""
+    },
+    "mobile": {
+      "native": "phantom:",
+      "universal": ""
+    },
+    "desktop": {
+      "native": "",
+      "universal": ""
+    },
+    "metadata": {
+      "shortName": "Phantom",
+      "colors": {
+        "primary": "rgb(255, 255, 255)",
+        "secondary": ""
+      }
+    },
+    "config": {
+      "comment": "Phantom",
+      "iosMinVersion": "1.8.0",
+      "imageUrl": "https://s3.amazonaws.com/dydx.exchange/logos/wallets/coinbase-wallet.png",
+      "encoding": "=\"#%/<>?@\\^`{|}:&",
+      "connections": [
+        {
+          "type": "phantomWallet",
+          "native": "phantom:",
+          "universal": ""
+        }
+      ],
+      "methods": [
+          "eth_sendTransaction",
+          "personal_sign",
+          "eth_signTypedData",
+          "wallet_addEthereumChain"
+      ]
+    }
+  },
+  {
     "id": "coinbase-wallet",
     "name": "Coinbase Wallet",
     "description": "",

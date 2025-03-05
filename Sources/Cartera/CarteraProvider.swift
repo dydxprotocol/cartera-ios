@@ -24,6 +24,12 @@ public final class CarteraProvider: NSObject, WalletOperationProviderProtocol {
         disconnect()
     }
 
+    // MARK: WalletDeeplinkHandlingProtocol
+    
+    public func handleResponse(_ url: URL) -> Bool {
+        currentRequestHandler?.handleResponse(url) ?? false
+    }
+    
     // MARK: WalletOperationProviderProtocol
 
     public var walletStatus: WalletStatusProtocol? {
