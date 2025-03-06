@@ -67,7 +67,7 @@
     ],
     "app": {
       "browser": "",
-      "ios": "https://apps.apple.com/us/app/coinbase-wallet-nfts-crypto/id1278383455",
+      "ios": "https://apps.apple.com/us/app/phantom-crypto-wallet/id1598432977",
       "android": "https://play.google.com/store/apps/details?id=org.toshi",
       "mac": "",
       "windows": "",
@@ -91,7 +91,7 @@
     "config": {
       "comment": "Phantom",
       "iosMinVersion": "1.8.0",
-      "imageUrl": "https://s3.amazonaws.com/dydx.exchange/logos/wallets/coinbase-wallet.png",
+      "imageUrl": "https://s3.amazonaws.com/dydx.exchange/logos/wallets/phantom.png",
       "encoding": "=\"#%/<>?@\\^`{|}:&",
       "connections": [
         {
