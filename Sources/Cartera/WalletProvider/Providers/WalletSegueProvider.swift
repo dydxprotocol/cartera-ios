@@ -13,6 +13,11 @@ import BigInt
 
 final class WalletSegueProvider: NSObject, WalletOperationProviderProtocol {
 
+    func handleResponse(_ url: URL) -> Bool {
+        let result = try? CoinbaseWalletSDK.shared.handleResponse(url)
+        return result ?? false
+    }
+
     // MARK: WalletOperationProviderProtocol
 
     var walletStatus: WalletStatusProtocol? {

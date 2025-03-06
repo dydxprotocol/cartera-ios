@@ -28,10 +28,12 @@ public struct WalletTransactionRequest {
     public let walletRequest: WalletRequest
     // Union of transaction request types
     public let ethereum: EthereumTransactionRequest?
+    public let solana: Data?
 
-    public init(walletRequest: WalletRequest, ethereum: EthereumTransactionRequest?) {
+    public init(walletRequest: WalletRequest, ethereum: EthereumTransactionRequest?, solana: Data? = nil) {
         self.walletRequest = walletRequest
         self.ethereum = ethereum
+        self.solana = solana
     }
 }
 
@@ -80,11 +82,15 @@ public protocol WalletOperationProtocol {
     func addChain(request: WalletRequest, chain: EthereumAddChainRequest, timeOut: TimeInterval?, connected: WalletConnectedCompletion?, completion: @escaping WalletOperationCompletion)
 }
 
+public protocol WalletDeeplinkHandlingProtocol {
+    func handleResponse(_ url: URL) -> Bool
+}
+
 public protocol WalletUserConsentOperationProtocol: WalletOperationProtocol {
     var userConsentDelegate: WalletUserConsentProtocol? { get set }
 }
 
-public protocol WalletOperationProviderProtocol: WalletStatusProviding, WalletUserConsentOperationProtocol, NSObjectProtocol {}
+public protocol WalletOperationProviderProtocol: WalletStatusProviding, WalletUserConsentOperationProtocol, WalletDeeplinkHandlingProtocol, NSObjectProtocol {}
 
 public extension WalletOperationProtocol {
     func logObject<T: Encodable>(label: String = "", _ object: T, function: String = #function) {

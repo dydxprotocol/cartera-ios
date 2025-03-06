@@ -10,6 +10,7 @@ import Cartera
 import SDWebImage
 import Web3
 import BigInt
+import SolanaSwift
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, WalletStatusDelegate {
     @IBOutlet var tableView: UITableView?
@@ -47,10 +48,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                                           redirectNative: "dydxV4",
                                                           redirectUniversal: "https://trade.dydx.exchange/",
                                                           appGroupIdentifier: "group.cartera.example")
-        let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://trade.stage.dydx.exchange/walletsegueCarteraExample")
+        let walletSegueConfig = WalletSegueConfig(callbackUrl: "https://v4-web-internal.vercel.app/walletsegueCarteraExample")
+        let phantomWalletConfig = PhantomWalletConfig(appUrl: "https://v4.testnet.dydx.exchange/",
+                                                      appRedirectBaseUrl: "https://v4-web-internal.vercel.app/phantomCarteraExample")
         return  WalletProvidersConfig(walletConnectV1: walletConnectV1Config,
                                       walletConnectV2: walletConnectV2Config,
-                                      walletSegue: walletSegueConfig)
+                                      walletSegue: walletSegueConfig,
+                                      phantomWallet: phantomWalletConfig)
     }()
 
     override func viewDidLoad() {
@@ -242,18 +246,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             let walletRequest = WalletRequest(wallet: wallet, address: nil, chainId: self.chainId, useModal: wallet == nil)
             let transaction: EthereumTransaction
+            let ethereumRequest : EthereumTransactionRequest?
             do {
                 transaction = try EthereumTransaction(from: EthereumAddress(hex: address, eip55: false),
                                                       to: EthereumAddress(hex: "0x0000000000000000000000000000000000000000", eip55: false),
                                                       value: EthereumQuantity(quantity: BigUInt( "1000000000000000"))
                 )
+                ethereumRequest = EthereumTransactionRequest(transaction: transaction)
             } catch {
-                showError(error: error)
-                return
+                // showError(error: error)
+                ethereumRequest = nil
             }
-
-            let ethereumRequest = EthereumTransactionRequest(transaction: transaction)
-            let request = WalletTransactionRequest(walletRequest: walletRequest, ethereum: ethereumRequest)
+            
+            let solana: Data?
+            if info.address == "Phantom" {
+                // This will cause error to be returned from Cartera since inputs are invalid
+                let instruction = SolanaSwift.TransactionInstruction(keys: [], programId: PublicKey.fake, data: [])
+                var transaction = SolanaSwift.Transaction(instructions: [instruction], recentBlockhash: "1234567890", feePayer: PublicKey.fake)
+                solana = try? transaction.serialize()
+            } else {
+                solana = nil
+            }
+            
+            let request = WalletTransactionRequest(walletRequest: walletRequest, ethereum: ethereumRequest, solana: solana)
             self.provider.send(request: request, connected: { info in
                 print("connected: \(info?.address ?? "")")
             }, completion: { [weak self] response, error in

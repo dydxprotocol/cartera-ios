@@ -17,6 +17,7 @@ public enum WalletConnectionType: Hashable {
     case walletConnectModal
     case walletSegue
     case magicLink
+    case phantomWallet
     case custom(String)
     case unknown
 
@@ -31,6 +32,8 @@ public enum WalletConnectionType: Hashable {
             self = .walletSegue
         } else if rawValue == "magicLink" {
             self = .magicLink
+        } else if rawValue == "phantomWallet" {
+            self = .phantomWallet
         } else {
             self = .custom(rawValue)
         }
@@ -48,6 +51,8 @@ public enum WalletConnectionType: Hashable {
             return "walletSegue"
         case .magicLink:
             return "magicLink"
+        case .phantomWallet:
+            return "phantomWallet"
         case .custom(let value):
             return value
         case .unknown:
@@ -125,6 +130,17 @@ public struct CarteraConfig: SingletonProtocol {
         LocalAuthenticator.shared = localAuthenticator
         updateConfigs()
     }
+    
+    @discardableResult
+    public mutating func handleResponse(_ url: URL) throws -> Bool {
+        for providers in registration.values {
+            if providers.provider.handleResponse(url) {
+                return true
+            }
+        }
+        
+        return false
+    }
 
     // MARK: Internal
 
@@ -179,6 +195,10 @@ public struct CarteraConfig: SingletonProtocol {
                 ]
             )
         }
+        
+        if let phantomWallet = walletProvidersConfig.phantomWallet {
+            PhantomWalletProvider.configure(config: phantomWallet)
+        }
     }
 
     private struct RegistrationConfig {
@@ -186,16 +206,14 @@ public struct CarteraConfig: SingletonProtocol {
         let consent: WalletUserConsentProtocol?
     }
 
-    private lazy var walletConnectV2Provider: WalletConnectV2Provider = {
-        WalletConnectV2Provider()
-    }()
-
     private lazy var registration: [WalletConnectionType: RegistrationConfig] = {
-        [
+        let walletConnectV2Provider = WalletConnectV2Provider()
+        return [
             .walletConnect: RegistrationConfig(provider: WalletConnectV1Provider(), consent: nil),
             .walletConnectV2: RegistrationConfig(provider: walletConnectV2Provider, consent: nil),
             .walletConnectModal: RegistrationConfig(provider: walletConnectV2Provider, consent: nil),
-            .walletSegue: RegistrationConfig(provider: WalletSegueProvider(), consent: nil)
+            .walletSegue: RegistrationConfig(provider: WalletSegueProvider(), consent: nil),
+            .phantomWallet: RegistrationConfig(provider: PhantomWalletProvider(), consent: nil),
         //    .magicLink: RegistrationConfig(provider: MagicLinkProvider(), consent: nil)
         ]
     }()
@@ -215,15 +233,18 @@ public struct CarteraConfig: SingletonProtocol {
 public struct WalletProvidersConfig: Equatable {
     public init(walletConnectV1: WalletConnectV1Config? = nil,
                 walletConnectV2: WalletConnectV2Config? = nil,
-                walletSegue: WalletSegueConfig? = nil) {
+                walletSegue: WalletSegueConfig? = nil,
+                phantomWallet: PhantomWalletConfig? = nil) {
         self.walletConnectV1 = walletConnectV1
         self.walletConnectV2 = walletConnectV2
         self.walletSegue = walletSegue
+        self.phantomWallet = phantomWallet
     }
 
     var walletConnectV1: WalletConnectV1Config?
     var walletConnectV2: WalletConnectV2Config?
     var walletSegue: WalletSegueConfig?
+    var phantomWallet: PhantomWalletConfig?
 }
 
 public struct WalletConnectV1Config: Equatable {
@@ -273,6 +294,16 @@ public struct WalletSegueConfig: Equatable {
 
     // WalletSegue (Coinbase)
     let callbackUrl: String
+}
+
+public struct PhantomWalletConfig: Equatable {
+    public init(appUrl: String, appRedirectBaseUrl: String) {
+        self.appUrl = appUrl
+        self.appRedirectBaseUrl = appRedirectBaseUrl
+    }
+
+    let appUrl: String
+    let appRedirectBaseUrl: String
 }
 
 class CarteraMarker: NSObject {}

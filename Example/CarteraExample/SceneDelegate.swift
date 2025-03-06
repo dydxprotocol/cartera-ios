@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import CoinbaseWalletSDK
+import Cartera
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -50,9 +50,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         if let url = userActivity.webpageURL {
             do {
-                try CoinbaseWalletSDK.shared.handleResponse(url)
+                try CarteraConfig.shared.handleResponse(url)
              } catch {
-                print("Coinbase SDK throwing error: \(error)")
+                print("CarteraConfig SDK throwing error: \(error)")
             }
         }
     }
