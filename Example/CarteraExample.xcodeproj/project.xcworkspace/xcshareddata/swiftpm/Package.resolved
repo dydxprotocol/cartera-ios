@@ -75,10 +75,10 @@
     {
       "identity" : "solana-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p2p-org/solana-swift",
+      "location" : "https://github.com/dydxprotocol/solana-swift",
       "state" : {
-        "revision" : "010a3e3a4cb583ccc3150a04d4270ad37d784ee8",
-        "version" : "5.0.0"
+        "branch" : "main",
+        "revision" : "3212af8f57321f81ae7035c27388c2a9cde11ab0"
       }
     },
     {

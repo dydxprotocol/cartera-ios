@@ -24,7 +24,8 @@ let package = Package(
         .package(url: "https://github.com/bitmark-inc/tweetnacl-swiftwrap.git", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/heckj/Base58Swift.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/WalletConnect/Web3.swift", exact: "1.0.2"),
-        .package(url: "https://github.com/p2p-org/solana-swift", from: "5.0.0")
+      //  .package(name: "solana-swift", path: "../solana-swift")
+        .package(url: "https://github.com/dydxprotocol/solana-swift", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
