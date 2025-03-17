@@ -44,7 +44,7 @@ private func stableStringify(_ dictionary: [String: Any]) -> String? {
     
     // Convert sorted dictionary to JSON
     if let jsonData = try? JSONSerialization.data(withJSONObject: sortedDict, options: []),
-       let jsonString = String(data: jsonData, encoding: .utf8) {
+       let jsonString = String(data: jsonData, encoding: .ascii) {
         return jsonString
     }
     
