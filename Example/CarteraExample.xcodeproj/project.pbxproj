@@ -17,6 +17,7 @@
 		027A7C5729A6C93B009116E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 027A7C5529A6C93B009116E4 /* LaunchScreen.storyboard */; };
 		027A7ED829A8679B009116E4 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 027A7ED729A8679B009116E4 /* SDWebImage */; };
 		027CAEFE2A5769440072956B /* QrCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027CAEFD2A5769440072956B /* QrCodeViewController.swift */; };
+		02886BCB2D84AECF005EF461 /* SolanaInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02886BCA2D84AECF005EF461 /* SolanaInteractor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		027A7C5629A6C93B009116E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		027A7C5829A6C93B009116E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		027CAEFD2A5769440072956B /* QrCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeViewController.swift; sourceTree = "<group>"; };
+		02886BCA2D84AECF005EF461 /* SolanaInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaInteractor.swift; sourceTree = "<group>"; };
 		02CAD9E429C2401800D6076C /* CarteraExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CarteraExample.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,6 +123,7 @@
 				027A7C4C29A6C93A009116E4 /* SceneDelegate.swift */,
 				027A7C4E29A6C93A009116E4 /* ViewController.swift */,
 				027CAEFD2A5769440072956B /* QrCodeViewController.swift */,
+				02886BCA2D84AECF005EF461 /* SolanaInteractor.swift */,
 				027A7C5029A6C93A009116E4 /* Main.storyboard */,
 				027A7C5329A6C93B009116E4 /* Assets.xcassets */,
 				027A7C5529A6C93B009116E4 /* LaunchScreen.storyboard */,
@@ -256,6 +259,7 @@
 			files = (
 				027A7C4F29A6C93A009116E4 /* ViewController.swift in Sources */,
 				027A7C4B29A6C93A009116E4 /* AppDelegate.swift in Sources */,
+				02886BCB2D84AECF005EF461 /* SolanaInteractor.swift in Sources */,
 				027CAEFE2A5769440072956B /* QrCodeViewController.swift in Sources */,
 				027A7C4D29A6C93A009116E4 /* SceneDelegate.swift in Sources */,
 			);

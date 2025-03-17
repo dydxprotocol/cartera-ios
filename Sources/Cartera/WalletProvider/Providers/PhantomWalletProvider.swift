@@ -129,18 +129,18 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             connectionCompletion = nil
             
             let errorCode = url.queryParams["errorCode"]
-            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unknown error"
             if let errorCode = errorCode {
                 let code = Int(errorCode) ?? -1
                 completion(nil, WalletError.error(code: .unexpectedResponse, message: errorMessage + " (\(code))"))
             } else {
-                phantomPublicKey = base58Decode(data: url.queryParams["phantom_encryption_public_key"])
+                let encodedPublicKey = url.queryParams["phantom_encryption_public_key"]
+                phantomPublicKey = base58Decode(data: encodedPublicKey)
                 let nonce = url.queryParams["nonce"]
                 if let data = decryptPayload(payload: url.queryParams["data"], nonce: nonce) {
                     if let response = try? JSONDecoder().decode(ConnectResponse.self,  from: data) {
                         session = response.session
-                        
-                        let walletInfo = WalletInfo(address: "Phantom", chainId: nil, wallet: connectionWallet)
+                        let walletInfo = WalletInfo(address: response.public_key, chainId: nil, wallet: connectionWallet)
                         _walletStatus.state = .connectedToWallet
                         _walletStatus.connectedWallet = walletInfo
                         DispatchQueue.main.async {
@@ -164,7 +164,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             
         case .onDisconnect:
             let errorCode = url.queryParams["errorCode"]
-            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unknown error"
             if let errorCode = errorCode {
                 Console.shared.log("PhantomWalletProvider Disconnected: \(errorMessage) (\(errorCode))")
             }
@@ -177,7 +177,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             operationCompletion = nil
             
             let errorCode = url.queryParams["errorCode"]
-            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unknown error"
             if let errorCode = errorCode {
                 let code = Int(errorCode) ?? -1
                 completion(nil, WalletError.error(code: .unexpectedResponse, message: errorMessage + " (\(code))"))
@@ -202,7 +202,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             operationCompletion = nil
             
             let errorCode = url.queryParams["errorCode"]
-            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unknown error"
             if let errorCode = errorCode {
                 let code = Int(errorCode) ?? -1
                 completion(nil, WalletError.error(code: .unexpectedResponse, message: errorMessage + " (\(code))"))
@@ -227,7 +227,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
             operationCompletion = nil
             
             let errorCode = url.queryParams["errorCode"]
-            let errorMessage = url.queryParams["errorMessage"] ?? "Unkbown error"
+            let errorMessage = url.queryParams["errorMessage"] ?? "Unknown error"
             if let errorCode = errorCode {
                 let code = Int(errorCode) ?? -1
                 completion(nil, WalletError.error(code: .unexpectedResponse, message: errorMessage + " (\(code))"))
@@ -314,11 +314,11 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
         openLaunchDeeplink(url: url) { [weak self] success in
             if !success {
                 completion(nil, WalletError.error(code: .unexpectedResponse, message: "Failed to open URL"))
+            } else {
+                // let deeplink callback handle the result
+                self?.connectionCompletion = completion
+                self?.connectionWallet = request.wallet
             }
-            
-            // let deeplink callback handle the result
-            self?.connectionCompletion = completion
-            self?.connectionWallet = request.wallet
         }
     }
     

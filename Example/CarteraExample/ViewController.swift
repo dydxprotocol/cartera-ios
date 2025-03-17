@@ -24,6 +24,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     private var chainId: Int {
         chainSegmentControl?.selectedSegmentIndex == 0 ? 1 : testnetChainId
     }
+    
+    public var isMainnet: Bool {
+        chainSegmentControl?.selectedSegmentIndex == 0
+    }
 
     private lazy var provider: CarteraProvider = {
          let provider = CarteraProvider()
@@ -258,26 +262,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 ethereumRequest = nil
             }
             
-            let solana: Data?
-            if info.address == "Phantom" {
-                // This will cause error to be returned from Cartera since inputs are invalid
-                let instruction = SolanaSwift.TransactionInstruction(keys: [], programId: PublicKey.fake, data: [])
-                var transaction = SolanaSwift.Transaction(instructions: [instruction], recentBlockhash: "1234567890", feePayer: PublicKey.fake)
-                solana = try? transaction.serialize()
-            } else {
-                solana = nil
-            }
-            
-            let request = WalletTransactionRequest(walletRequest: walletRequest, ethereum: ethereumRequest, solana: solana)
-            self.provider.send(request: request, connected: { info in
-                print("connected: \(info?.address ?? "")")
-            }, completion: { [weak self] response, error in
-                if let error = error {
-                    self?.showError(error: error)
+            Task {
+                let solana: Data?
+                if info.wallet?.id == "phantom-wallet", let publicKey = info.address {
+                    let solanaInteractor = SolanaInteractor(endpoint: self.isMainnet ? SolanaInteractor.mainnetEndpoint : SolanaInteractor.devnetEndpoint)
+                    let blockhash = try await solanaInteractor.getRecentBlockhash()
+                    
+                    do {
+                        let key = try PublicKey(string: publicKey)
+                        let instruction = SystemProgram.transferInstruction(from: key, to: key, lamports: 100)
+                        let message = SolanaSwift.TransactionMessage(instructions: [instruction], recentBlockhash: blockhash, payerKey: key)
+                        let versionedMessage = VersionedMessage.legacy(try message.compileToLegacyMessage())
+                        let transaction = SolanaSwift.VersionedTransaction(message: versionedMessage)
+                       // var transaction = SolanaSwift.Transaction(instructions: [instruction], recentBlockhash: blockhash, feePayer: key)
+                        solana = try transaction.serialize()
+                    } catch {
+                        print("Unable to serialize transaction: \(error)\n")
+                        solana = nil
+                    }
                 } else {
-                    self?.showAlert(title: "Sent", message: "\(response ?? "")")
+                    solana = nil
                 }
-            })
+                
+                let request = WalletTransactionRequest(walletRequest: walletRequest, ethereum: ethereumRequest, solana: solana)
+                self.provider.send(request: request, connected: { info in
+                    print("connected: \(info?.address ?? "")")
+                }, completion: { [weak self] response, error in
+                    DispatchQueue.main.async {
+                        if let error = error {
+                            self?.showError(error: error)
+                        } else {
+                            self?.showAlert(title: "Sent", message: "\(response ?? "")")
+                        }
+                    }
+
+                })
+            }
         })
     }
 
