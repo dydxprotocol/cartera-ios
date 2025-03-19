@@ -154,15 +154,6 @@
       }
     },
     {
-      "identity" : "web3.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/argentlabs/web3.swift",
-      "state" : {
-        "revision" : "855c8d1f8655eba55cc5f2d866e8dd4db1ab2167",
-        "version" : "1.5.1"
-      }
-    },
-    {
       "identity" : "websocket-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/websocket-kit.git",
