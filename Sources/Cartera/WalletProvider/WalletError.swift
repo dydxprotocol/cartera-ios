@@ -14,7 +14,7 @@ struct WalletError {
         if let title = title, title.isNotEmpty {
             userInfo["title"] = title
         } else {
-            userInfo["title"] = "Wallet Error"
+            userInfo["title"] = "Wallet Error 1"
         }
         if message?.isNotEmpty ?? false {
             userInfo["message"] = message
