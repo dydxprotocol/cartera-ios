@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/WalletConnect/WalletConnectSwift.git", .upToNextMinor(from: "1.7.0")),
         .package(url: "https://github.com/dydxprotocol/WalletConnectSwiftV2.git", branch: "develop"),
         .package(url: "https://github.com/daltoniam/Starscream.git", branch: "3.1.2"),
-        .package(url: "https://github.com/coinbase/wallet-mobile-sdk", branch: "1.0.5"),
+        .package(url: "https://github.com/MobileWalletProtocol/wallet-mobile-sdk", branch: "1.0.5"),
         .package(url: "https://github.com/WalletConnect/HDWallet", branch: "develop"),
         .package(url: "https://github.com/bitmark-inc/tweetnacl-swiftwrap.git", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/heckj/Base58Swift.git", .upToNextMajor(from: "2.1.0")),
