@@ -48,4 +48,13 @@ public final class SolanaInteractor {
         }
         return balance
     }
+    
+    public func sendTransaction(transaction: String) async throws -> String {
+        guard let configs = RequestConfiguration(encoding: "base58") else {
+            throw NSError(domain: "SolanaInteractor", code: 0, userInfo: nil)
+        }
+        let result = try await apiClient.sendTransaction(transaction: transaction,
+                                                         configs: configs)
+        return result
+    }
 }
