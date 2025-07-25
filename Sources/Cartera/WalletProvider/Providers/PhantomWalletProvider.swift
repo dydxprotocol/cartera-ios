@@ -37,6 +37,8 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
     
     static private var appUrl: String?
     static private var appRedirectBaseUrl: String?
+    static private var solanaMainnetUrl: String?
+    static private var solanaTestnetUrl: String?
     static var isConfigured: Bool {
         return appUrl != nil && appRedirectBaseUrl != nil
     }
@@ -385,7 +387,21 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
                     return
                 }
                 
-                let endpoint = request.walletRequest.chainId == 1 ? SolanaInteractor.mainnetEndpoint : SolanaInteractor.devnetEndpoint
+                let solanaMainnetEndpoint: APIEndPoint
+                if let solanaMainnetUrl = PhantomWalletProvider.solanaMainnetUrl {
+                    solanaMainnetEndpoint = APIEndPoint(address: solanaMainnetUrl, network: .mainnetBeta)
+                } else {
+                    solanaMainnetEndpoint = SolanaInteractor.mainnetEndpoint
+                }
+                
+                let solanaTestnetEndpoint: APIEndPoint
+                if let solanaTestnetUrl = PhantomWalletProvider.solanaTestnetUrl {
+                    solanaTestnetEndpoint = APIEndPoint(address: solanaTestnetUrl, network: .mainnetBeta)
+                } else {
+                    solanaTestnetEndpoint = SolanaInteractor.devnetEndpoint
+                }
+                
+                let endpoint = request.walletRequest.chainId == 1 ? solanaMainnetEndpoint : solanaTestnetEndpoint
                 let solanaInteractor = SolanaInteractor(endpoint: endpoint)
                 Task {
                     do {

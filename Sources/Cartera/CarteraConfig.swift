@@ -297,13 +297,17 @@ public struct WalletSegueConfig: Equatable {
 }
 
 public struct PhantomWalletConfig: Equatable {
-    public init(appUrl: String, appRedirectBaseUrl: String) {
+    public init(appUrl: String, appRedirectBaseUrl: String, solanaMainnetUrl: String? = nil, solanaTestnetUrl: String? = nil) {
         self.appUrl = appUrl
         self.appRedirectBaseUrl = appRedirectBaseUrl
+        self.solanaMainnetUrl = solanaMainnetUrl
+        self.solanaTestnetUrl = solanaTestnetUrl
     }
 
     let appUrl: String
     let appRedirectBaseUrl: String
+    let solanaMainnetUrl: String?
+    let solanaTestnetUrl: String?
 }
 
 class CarteraMarker: NSObject {}
