@@ -12,7 +12,6 @@ import WalletConnectSign
 import WalletConnectModal
 
 public enum WalletConnectionType: Hashable {
-    case walletConnect
     case walletConnectV2
     case walletConnectModal
     case walletSegue
@@ -22,9 +21,7 @@ public enum WalletConnectionType: Hashable {
     case unknown
 
     init(rawValue: String) {
-        if rawValue == "walletConnect" {
-            self = .walletConnect
-        } else if rawValue == "walletConnectV2" {
+        if rawValue == "walletConnectV2" {
             self = .walletConnectV2
         } else if rawValue == "walletConnectModal" {
             self = .walletConnectModal
@@ -41,8 +38,6 @@ public enum WalletConnectionType: Hashable {
 
     var rawValue: String? {
         switch self {
-        case .walletConnect:
-            return "walletConnect"
         case .walletConnectV2:
             return "walletConnectV2"
         case .walletConnectModal:
@@ -209,7 +204,6 @@ public struct CarteraConfig: SingletonProtocol {
     private lazy var registration: [WalletConnectionType: RegistrationConfig] = {
         let walletConnectV2Provider = WalletConnectV2Provider()
         return [
-            .walletConnect: RegistrationConfig(provider: WalletConnectV1Provider(), consent: nil),
             .walletConnectV2: RegistrationConfig(provider: walletConnectV2Provider, consent: nil),
             .walletConnectModal: RegistrationConfig(provider: walletConnectV2Provider, consent: nil),
             .walletSegue: RegistrationConfig(provider: WalletSegueProvider(), consent: nil),

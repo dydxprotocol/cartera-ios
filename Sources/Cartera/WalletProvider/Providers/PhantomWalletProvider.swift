@@ -54,7 +54,7 @@ final class PhantomWalletProvider: NSObject, WalletOperationProviderProtocol {
     private var session: String? = nil
     
     private var publickKeyEncoded: String? {
-        guard let bytes = publicKey?.bytes else {
+        guard let bytes = publicKey?.byteArray else {
             return nil
         }
         
